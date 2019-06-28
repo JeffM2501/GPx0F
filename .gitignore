@@ -328,3 +328,14 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/_test/CoreData.pak
+/_test/*.dll
+/_test/*.xml
+/_test/*.exe
+Win32_DirectX
+Win32_OpenGL
+/_test/*.config
+Win64_DirectX
+Win64_OpenGL
+/_test/assets/CoreData.pak
+/_test/*.dylib
