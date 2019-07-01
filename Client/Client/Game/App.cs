@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Urho;
 using Urho.Resources;
+using Urho.Actions;
 
 namespace Client.Game
 {
@@ -40,64 +41,39 @@ namespace Client.Game
             skybox.Model = ResourceCache.GetModel("Models/Box.mdl");
             skybox.Material = ResourceCache.GetMaterial("Materials/Skybox.xml");
 
+            var ring = World.CreateChild("sky2").CreateComponent<StaticModel>();
+            ring.Model = ResourceCache.GetModel("Models/MountainRing.mdl");
+            ring.Material = ResourceCache.GetMaterial("Materials/MountainRing.xml");
+
             //create scene node
+            float size = 500;
+            float repeatPerUnit = 0.5f;
+
             Node node = World.CreateChild("Object");
             node.Position = new Vector3(0.0f, 0.0f, 0.0f);
-            var model = node.CreateComponent<StaticModel>();
+            node.Scale = new Vector3(size, size, size);
+;           var model = node.CreateComponent<StaticModel>();
             model.Model = ResourceCache.GetModel("Models/Plane.mdl");
-            model.s = ResourceCache.GetModel("Models/Plane.mdl");
-
-            //             CustomGeometry _geometry = node.CreateComponent<CustomGeometry>();
-            //             _geometry.BeginGeometry(0, PrimitiveType.TriangleList);
-            // 
-            //             float size = 100;
-            //             // tri 1
-            //             _geometry.DefineVertex(new Vector3(-size, 0, 0));
-            //             _geometry.DefineTexCoord(new Vector2(0.0f, 0.0f));
-            // 
-            //             _geometry.DefineVertex(new Vector3(size, 0, 0));
-            //             _geometry.DefineTexCoord(new Vector2(0.0f, 1.0f));
-            // 
-            //             _geometry.DefineVertex(new Vector3(size, 0, size));
-            //             _geometry.DefineTexCoord(new Vector2(1.0f, 0.0f));
-            // 
-            //             // tri 2
-            //             _geometry.DefineVertex(new Vector3(-size, 0, 0));
-            //             _geometry.DefineTexCoord(new Vector2(0.0f, 1.0f));
-            // 
-            //             _geometry.DefineVertex(new Vector3(size, 0, size));
-            //             _geometry.DefineTexCoord(new Vector2(1.0f, 1.0f));
-            // 
-            //             _geometry.DefineVertex(new Vector3(-size, 0, size));
-            //             _geometry.DefineTexCoord(new Vector2(1.0f, 0.0f));
-            // 
-            //             _geometry.Commit();
-            //     
-            //             _geometry.SetMaterial(ResourceCache.GetMaterial("Materials/Ground.xml"));
-
-
+            
+            model.SetMaterial(ResourceCache.GetMaterial("Materials/Ground.xml"));
+            model.Material.SetUVTransform(Vector2.Zero, 0, size * repeatPerUnit);
 
             var lightNode = World.CreateChild("DirectionalLight");
-            lightNode.SetDirection(new Vector3(5, 5, -5f)); // The direction vector does not need to be normalized
+            lightNode.SetDirection(new Vector3(5, -5, -5f)); // The direction vector does not need to be normalized
             var light = lightNode.CreateComponent<Light>();
-            light.LightType = LightType.Point;
-            light.Brightness = 2;
-            light.FadeDistance = 100;
+            light.LightType = LightType.Directional;
+            light.Brightness = 1;
 
-            // 
-            //             var ground = World.CreateChild("ground");
-            //             var groundModel = ground.CreateComponent<StaticModel>();
-            // 
-            //             var geo = new CustomGeometry();
-            // 
-            //             groundModel.ge
-            // 
-            //             geo.BeginGeometry()
 
             var cameraNode = World.CreateChild("camera");
             MainCamera = cameraNode.CreateComponent<Camera>();
             MainCamera.Node.Position = new Vector3(0, 1, 0);
+            var zone = cameraNode.CreateComponent<Zone>();
+            zone.SetBoundingBox(new BoundingBox(MainCamera.Frustum));
+            zone.AmbientColor = new Color(0.25f, 0.25f, 0.25f, 1);
 
+            cameraNode.RunActionsAsync(new RotateAroundBy(100, Vector3.Zero, 0 , 360, 0, TransformSpace.Local));
+            cameraNode.RunActionsAsync(new MoveBy(100,Vector3.UnitZ * 100));
         }
     }
 }

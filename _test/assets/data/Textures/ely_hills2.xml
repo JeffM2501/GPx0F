@@ -1,0 +1,9 @@
+<cubemap>
+    <face name="hills2_rt.png" />
+    <face name="hills2_lf.png" />
+    <face name="hills2_bk.png" />
+    <face name="hills2_ft.png" />
+    <face name="hills2_up.png" />
+    <face name="hills2_dn.png" />
+    <quality low="0" />
+</cubemap>
