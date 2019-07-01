@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<material>
+	<technique name="Techniques/DiffNormal.xml" quality="1" />
+	<technique name="Techniques/Diff.xml" />
+	<texture unit="diffuse" name="Legacy/zone/boxwall.png" />
+	<texture unit="normal" name="Legacy/zone/boxwall_normal.png" />
+	<parameter name="MatDiffColor" value="1 1 1 1" />
+	<parameter name="MatSpecColor" value="0 0 0 0" />
+	<parameter name="MatEmissiveColor" value="0 0 0 1" />
+</material>

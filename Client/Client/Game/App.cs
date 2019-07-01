@@ -15,11 +15,16 @@ namespace Client.Game
         protected Scene World = null;
         protected Camera MainCamera = null;
 
+        protected Arena CurrentArena = null;
+
         public App(ApplicationOptions options = null) : base(options) { }
 
         protected override void Start()
         {
+            Menus.Stack.Setup(this);
+
             SetupScene();
+            SetupMainMenu();
 
             Renderer.SetViewport(0, new Viewport(Context, World, MainCamera, null));
             Input.KeyDown += Input_KeyDown;
@@ -36,44 +41,36 @@ namespace Client.Game
         {
             World = new Scene();
             World.CreateComponent<Octree>();
+        }
 
-            var skybox = World.CreateChild("Sky").CreateComponent<Skybox>();
-            skybox.Model = ResourceCache.GetModel("Models/Box.mdl");
-            skybox.Material = ResourceCache.GetMaterial("Materials/Skybox.xml");
+        public void SetupMainMenu()
+        {
+            World.Clear();
+            World.CreateComponent<Octree>();
+            MainCamera = Geometry.MenuBackground.CreateCamera(World);
 
-            var ring = World.CreateChild("sky2").CreateComponent<StaticModel>();
-            ring.Model = ResourceCache.GetModel("Models/MountainRing.mdl");
-            ring.Material = ResourceCache.GetMaterial("Materials/MountainRing.xml");
+            CurrentArena = new Geometry.MenuBackground();
+            CurrentArena.Setup(ResourceCache, World, 200);
 
-            //create scene node
-            float size = 500;
-            float repeatPerUnit = 0.5f;
+            Menus.Stack.ClearAll();
 
-            Node node = World.CreateChild("Object");
-            node.Position = new Vector3(0.0f, 0.0f, 0.0f);
-            node.Scale = new Vector3(size, size, size);
-;           var model = node.CreateComponent<StaticModel>();
-            model.Model = ResourceCache.GetModel("Models/Plane.mdl");
-            
-            model.SetMaterial(ResourceCache.GetMaterial("Materials/Ground.xml"));
-            model.Material.SetUVTransform(Vector2.Zero, 0, size * repeatPerUnit);
+             var main = new Menus.Main();
+             main.StartGame += Main_StartGame;
+             main.Quit += Main_Quit;
+             Menus.Stack.Push(main);
+        }
 
-            var lightNode = World.CreateChild("DirectionalLight");
-            lightNode.SetDirection(new Vector3(5, -5, -5f)); // The direction vector does not need to be normalized
-            var light = lightNode.CreateComponent<Light>();
-            light.LightType = LightType.Directional;
-            light.Brightness = 1;
+        private void Main_Quit(object sender, EventArgs e)
+        {
+            Config.Current.Save();
+            Exit();
+        }
 
+        private void Main_StartGame(object sender, EventArgs e)
+        {
+            Menus.Stack.ClearAll();
 
-            var cameraNode = World.CreateChild("camera");
-            MainCamera = cameraNode.CreateComponent<Camera>();
-            MainCamera.Node.Position = new Vector3(0, 1, 0);
-            var zone = cameraNode.CreateComponent<Zone>();
-            zone.SetBoundingBox(new BoundingBox(MainCamera.Frustum));
-            zone.AmbientColor = new Color(0.25f, 0.25f, 0.25f, 1);
-
-            cameraNode.RunActionsAsync(new RotateAroundBy(100, Vector3.Zero, 0 , 360, 0, TransformSpace.Local));
-            cameraNode.RunActionsAsync(new MoveBy(100,Vector3.UnitZ * 100));
+            // start the game...
         }
     }
 }

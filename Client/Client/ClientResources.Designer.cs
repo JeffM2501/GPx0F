@@ -61,6 +61,15 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copyright 2019 Jeffery Myers.
+        /// </summary>
+        internal static string CopyrightText {
+            get {
+                return ResourceManager.GetString("CopyrightText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The asset folder was not found at $F.
         /// </summary>
         internal static string NoAssetPathError {

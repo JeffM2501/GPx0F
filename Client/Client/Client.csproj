@@ -73,8 +73,14 @@
       <DependentUpon>GameWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Game\App.cs" />
+    <Compile Include="Game\Arena.cs" />
+    <Compile Include="Geometry\MenuBackground.cs" />
+    <Compile Include="Geometry\SimpleArena.cs" />
+    <Compile Include="Menus\Main.cs" />
+    <Compile Include="Menus\Stack.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ships.cs" />
     <EmbeddedResource Include="ClientResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ClientResources.Designer.cs</LastGenOutput>
