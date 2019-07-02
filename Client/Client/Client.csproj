@@ -108,6 +108,7 @@
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Geometry\MenuBackground.cs" />
     <Compile Include="Geometry\SimpleArena.cs" />
+    <Compile Include="Menus\Credits.cs" />
     <Compile Include="Menus\Main.cs" />
     <Compile Include="Menus\Settings\General.cs" />
     <Compile Include="Menus\Stack.cs" />
