@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Urho;
+using Urho.Gui;
 using Urho.Resources;
 
 namespace Client.Menus
@@ -16,6 +17,8 @@ namespace Client.Menus
         public static void Setup(Application app)
         {
             RootApp = app;
+            XmlFile style = RootApp.ResourceCache.GetXmlFile("UI/DefaultStyle.xml");
+            RootApp.UI.Root.SetDefaultStyle(style);
         }
 
 
@@ -105,6 +108,118 @@ namespace Client.Menus
             public virtual void Deactivate()
             {
 
+            }
+
+            protected Text CreateLabel(int x, int y, string text, HorizontalAlignment hAlign = HorizontalAlignment.Left, VerticalAlignment vAlign = VerticalAlignment.Top, int size = 18, UIElement root = null)
+            {
+                Font font = Resources.GetFont("Fonts/Exo2-Regular.otf");
+
+                if (root == null)
+                    root = RootElement;
+
+                Text label = new Text();
+                root.AddChild(label);
+                label.SetAlignment(hAlign, vAlign);
+                label.SetPosition(x, y);
+                label.SetFont(font, size);
+                label.Value = text;
+
+                return label;
+            }
+
+            protected Button CreateButton(int x, int y, int xSize, int ySize, string text, HorizontalAlignment hAlign = HorizontalAlignment.Left, VerticalAlignment vAlign = VerticalAlignment.Top, UIElement root = null)
+            {
+                Font font = Resources.GetFont("Fonts/Exo2-Medium.otf");
+                if (root == null)
+                    root = RootElement;
+
+                // Create the button and center the text onto it
+                Button button = new Button();
+                root.AddChild(button);
+                button.SetStyleAuto(null);
+                button.SetAlignment(hAlign, vAlign);
+                button.SetPosition(x, y);
+                button.SetSize(xSize, ySize);
+
+                Text buttonText = new Text();
+                button.AddChild(buttonText);
+                buttonText.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+                buttonText.SetPosition(0, -ySize / 10);
+                buttonText.SetFont(font, ySize/2);
+                buttonText.Value = text;
+
+                return button;
+            }
+
+            protected List<Button> CreateButtonColumnn(int x, int y, int xSize, int ySize, int spacing, string[] texts, HorizontalAlignment hAlign = HorizontalAlignment.Left, VerticalAlignment vAlign = VerticalAlignment.Top, UIElement root = null)
+            {
+                List<Button> buttons = new List<Button>();
+                foreach (var text in texts)
+                {
+                    buttons.Add(CreateButton(x, y, xSize, ySize, text, hAlign, vAlign, root));
+                    y += ySize + spacing;
+                }
+                return buttons;
+            }
+
+            protected Slider CreateSlider(int x, int y, int xSize, int ySize, string text, UIElement root = null)
+            {
+                if (root == null)
+                    root = RootElement;
+
+                Font font = Resources.GetFont("Fonts/Exo2-Medium.otf");
+                // Create text and slider below it
+                Text sliderText = new Text();
+                root.AddChild(sliderText);
+                sliderText.SetPosition(x, y);
+                sliderText.SetFont(font, ySize - 5 );
+                sliderText.Value = text;
+
+                Slider slider = new Slider();
+                root.AddChild(slider);
+                slider.SetStyleAuto(null);
+                slider.SetPosition(x, y + 20);
+                slider.SetSize(xSize, ySize/2);
+                // Use 0-1 range for controlling sound/music master volume
+                slider.Range = 1.0f;
+
+                return slider;
+            }
+
+            protected void AddVersionMarker()
+            {
+                var versionText = new Text();
+                versionText.Value = Config.GetVersionString();
+                versionText.HorizontalAlignment = HorizontalAlignment.Right;
+                versionText.VerticalAlignment = VerticalAlignment.Bottom;
+                versionText.SetFont(Resources.GetFont("Fonts/Exo2-Medium.otf"), 14);
+                versionText.Position = new IntVector2(-20, -20);
+                versionText.SetColor(Color.White);
+                versionText.SetMaxAnchor(1, 1);
+                versionText.SetMinAnchor(1, 1);
+                RootElement.AddChild(versionText);
+            }
+
+            protected void AddHeaderString(string text, int size = -1)
+            {
+                AddHeaderString(text, Color.FromHex("485872"), size);
+            }
+
+            protected void AddHeaderString(string text, Color color, int size = -1)
+            {
+                if (size < 0)
+                    size = 120;
+
+                var titleText = new Text();
+                titleText.Value = text;
+                titleText.HorizontalAlignment = HorizontalAlignment.Left;
+                titleText.VerticalAlignment = VerticalAlignment.Top;
+                titleText.SetFont(Resources.GetFont("Fonts/Exo2-Black.otf"), size);
+                titleText.Position = new IntVector2(20, 20);
+                titleText.SetColor(color);
+                titleText.SetMaxAnchor(0, 0);
+                titleText.SetMinAnchor(0, 0);
+                RootElement.AddChild(titleText);
             }
         }
     }

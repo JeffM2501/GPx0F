@@ -27,6 +27,8 @@ namespace Client.Game
             Input.SetMouseMode(MouseMode.Absolute);
             Input.SetMouseVisible(true);
 
+            Input.ExitRequested += Input_ExitRequested;
+
             Menus.Stack.Setup(this);
 
             SetupScene();
@@ -34,13 +36,39 @@ namespace Client.Game
 
             Renderer.SetViewport(0, new Viewport(Context, World, MainCamera, null));
             Input.KeyDown += Input_KeyDown;
+
+            if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window)
+                this.Graphics.SetWindowPosition(new IntVector2(Config.Current.WindowBounds.X, Config.Current.WindowBounds.Y));
+
+            Graphics.WindowTitle = ClientResources.WindowTitle;
+        }
+
+        private void Input_ExitRequested(ExitRequestedEventArgs obj)
+        {
+            if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window)
+            {
+                Config.Current.WindowBounds = new System.Drawing.Rectangle(Graphics.WindowPosition.X, Graphics.WindowPosition.Y, Graphics.Width, Graphics.Height);
+            }
+        }
+
+        protected override void Stop()
+        {
+            if (Config.Current != null)
+                Config.Current.Save();
+
+             base.Stop();
+        }
+
+        protected override void OnUpdate(float timeStep)
+        {
+            base.OnUpdate(timeStep);
         }
 
 
         private void Input_KeyDown(KeyDownEventArgs args)
         {
             if (args.Key == Key.Esc)
-                Exit();
+                DoExit();
         }
 
         public void SetupScene()
@@ -79,10 +107,18 @@ namespace Client.Game
 
         }
 
+        public void DoExit()
+        {
+            if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window)
+            {
+                Config.Current.WindowBounds = new System.Drawing.Rectangle(Graphics.WindowPosition.X, Graphics.WindowPosition.Y, Graphics.Width, Graphics.Height);
+            }
+            Exit();
+        }
+
         private void Main_Quit(object sender, EventArgs e)
         {
-            Config.Current.Save();
-            Exit();
+            DoExit();
         }
 
         private void Main_StartGame(object sender, EventArgs e)

@@ -117,13 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
   <data name="CopyrightText" xml:space="preserve">
     <value>Copyright 2019 Jeffery Myers</value>
+  </data>
+  <data name="Credits" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="JoinGame" xml:space="preserve">
+    <value>Join Game...</value>
+  </data>
+  <data name="NewGame" xml:space="preserve">
+    <value>New Game</value>
   </data>
   <data name="NoAssetPathError" xml:space="preserve">
     <value>The asset folder was not found at $F</value>
   </data>
   <data name="NoAssetPathErrorTitle" xml:space="preserve">
-    <value />
+    <value>No assets found</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings...</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>General Settings</value>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>GPx0F</value>
   </data>
 </root>

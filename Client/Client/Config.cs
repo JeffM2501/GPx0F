@@ -32,6 +32,17 @@ namespace Client
         // data directory
         public string AssetFolder = string.Empty;
 
+
+        // rendering
+        public int Multisample = 16;
+        public bool LimitFPS = false;
+
+
+        // audio
+        public float MasterVolume = 1.0f;
+        public float EffectsVolume = 1.0f;
+        public float MusicVolume = 1.0f;
+
         public void Save()
         {
             FileInfo configFile = GetConfigFile();
@@ -84,6 +95,16 @@ namespace Client
 
             return path;
         }
+
+        public static string GetVersionString()
+        {
+            string thisPath = Assembly.GetExecutingAssembly().Location;
+            FileVersionInfo thisInfo = FileVersionInfo.GetVersionInfo(thisPath);
+
+
+            return "v." + thisInfo.FileVersion + ":" + File.GetCreationTime(thisPath).ToString();
+        }
+
 
         private static FileInfo GetConfigFile()
         {

@@ -46,12 +46,18 @@ namespace Client
                     options.Width = Config.Current.WindowBounds.Width;
                     options.Height = Config.Current.WindowBounds.Height;
                 }
-                options.Multisampling = 8;
-                options.LimitFps = true;
-                options.NoSound = false;
-              //  options = null;
-                Game.App app = new Game.App(options);
-                var exitCode = app.Run();
+                options.Multisampling = Config.Current.Multisample;
+                options.LimitFps = Config.Current.LimitFPS;
+
+                try
+                {
+                    Game.App app = new Game.App(options);
+                    var exitCode = app.Run();
+                }
+                catch(Exception /*ex*/)
+                {
+                    
+                }
             }
         }
 
