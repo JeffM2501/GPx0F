@@ -45,7 +45,7 @@ namespace Client.Menus
 
         private void CreditsPressed(PressedEventArgs obj)
         {
-            Stack.Push(new Settings.General());
+            Stack.Push(new Credits());
         }
 
         private void Settings_Pressed(PressedEventArgs obj)

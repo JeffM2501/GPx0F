@@ -97,6 +97,28 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main Codebase
+        ///Copyright 2019 Jeffery Myers
+        ///
+        ///Third Party Asset Copyright Holders
+        ///BZFlag Assets, Copyright (c) 1993 - 2018 Tim Riker, Mozilla Public License version 2.0
+        ///
+        ///Exo2 Font, Copyright (c) 2013, Natanael Gama (www.ndiscovered.com . info(at)ndiscovered.com) Open Font License
+        ///
+        ///https://freesound.org/s/425368/
+        ///Copyright 2018 Soundholder CCBySA 3.0
+        ///
+        ///Music from https://filmmusic.io:
+        ///&quot;Take a Chance&quot; by Kevin MacLeod (https://incompetech.com)
+        ///Licence: CC BY 4.0.
+        /// </summary>
+        internal static string CreditText {
+            get {
+                return ResourceManager.GetString("CreditText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         internal static string Exit {

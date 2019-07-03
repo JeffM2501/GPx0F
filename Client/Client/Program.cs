@@ -54,7 +54,7 @@ namespace Client
                     Game.App app = new Game.App(options);
                     var exitCode = app.Run();
                 }
-                catch(Exception /*ex*/)
+                catch(Exception ex)
                 {
                     
                 }

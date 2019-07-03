@@ -13,6 +13,8 @@ namespace Client
     {
         private static readonly int CurrentVersion = 1;
 
+        public event EventHandler ApplyChanges = null;
+
         // version info
         public int Version = CurrentVersion;
 
@@ -42,6 +44,18 @@ namespace Client
         public float MasterVolume = 1.0f;
         public float EffectsVolume = 1.0f;
         public float MusicVolume = 1.0f;
+
+
+        // UI
+        public int RadarSize = 300;
+
+
+
+        public void Dirty()
+        {
+            ApplyChanges?.Invoke(this, EventArgs.Empty);
+            Save();
+        }
 
         public void Save()
         {

@@ -21,7 +21,6 @@ namespace Client.Menus
             RootApp.UI.Root.SetDefaultStyle(style);
         }
 
-
         private static List<MenuScreen> MenuStack = new List<MenuScreen>();
 
         private static MenuScreen Top()

@@ -20,9 +20,9 @@ namespace Client.Geometry
                 return false;
 
             Random rng = new Random();
-            int t = rng.Next(0, (int)ShipNode.TeamColors.Black);
+            int t = rng.Next(0, (int)TeamColors.Black);
 
-            MenuShip = Ships.GetShipNode(resources, world, (ShipNode.TeamColors)t, "Mk3");
+            MenuShip = Ships.GetShipNode(resources, world, (TeamColors)t, "Mk3");
             MenuShip.Node.Position = new Vector3(-2, 0, 0);
             MenuShip.Node.Rotate(Quaternion.FromAxisAngle(Vector3.UnitY, rng.Next(160, 200) * -1.0f));
             //    KeepSpinning();

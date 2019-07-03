@@ -11,6 +11,17 @@ namespace Client
 {
     public static class Ships
     {
+        public enum TeamColors
+        {
+            Blue,
+            Red,
+            Green,
+            Purple,
+            White,
+            Yellow,
+            Black
+        }
+
         public class ShipNode : Component
         {
             public static float BobbleMag = 0.1f;
@@ -24,17 +35,6 @@ namespace Client
             {
                 ReceiveSceneUpdates = true;
             }
-  
-            public enum TeamColors
-            {
-                Blue,
-                Red,
-                Green,
-                Purple,
-                White,
-                Yellow,
-                Black
-            }
             public TeamColors TeamColor = TeamColors.Blue;
 
             protected override void OnUpdate(float timeStep)
@@ -46,8 +46,7 @@ namespace Client
             }
         }
 
-
-        public static ShipNode GetShipNode(ResourceCache resources, Node root, ShipNode.TeamColors team, string shipType)
+        public static ShipNode GetShipNode(ResourceCache resources, Node root, TeamColors team, string shipType)
         {
             string path = "Models/Ships/" + shipType;
             Node coreNode = root.CreateChild("ship");

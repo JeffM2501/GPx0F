@@ -129,6 +129,10 @@
   <data name="Credits" xml:space="preserve">
     <value>Credits</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CreditText" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Credits.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
