@@ -27,11 +27,6 @@ namespace Client.Game
         protected void StartGame()
         {
             SetupHud();
-
-            World.GetComponent<PhysicsWorld>().PhysicsPreStep += PhysicsPreStep;
-            
-            Update += Game_Update;
-
             MainCamera = Geometry.MenuBackground.CreateCamera(World);
             SetMainViewport();
 
@@ -40,18 +35,22 @@ namespace Client.Game
 
             Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
 
-          //  SetInputMode(true);
+            SetInputMode(true);
             // for now set the state to limboed and wait for a spawn
             SetLimboed();
         }
 
-        private void PhysicsPreStep(PhysicsPreStepEventArgs obj)
-        {
-            UpdateFrameInput(obj.TimeStep);
-        }
-
         protected void StopGame()
         {
+            if (World != null)
+            {
+                World.Clear();
+                World.Remove();
+                World = null;
+            }
+            CurrentArena = null;
+
+            GameState = GameStates.Inactive;
             Update -= Game_Update;
         }
 
@@ -63,7 +62,12 @@ namespace Client.Game
 
         private void Game_Update(Urho.UpdateEventArgs obj)
         {
-            switch(GameState)
+            if (Exiting)
+                return;
+
+            UpdateFrameInput(obj.TimeStep);
+
+            switch (GameState)
             {
                 case GameStates.Inactive:
                     return;
@@ -106,27 +110,22 @@ namespace Client.Game
             }
         }
 
-        protected void SetMaxInputs()
-        {
-            ThisFrameInput.SetMaxAxisVal(Config.AxisFunctions.Acceleration, 50);
-            ThisFrameInput.SetMaxAxisVal(Config.AxisFunctions.Turning, 360);
-            ThisFrameInput.SetMaxAxisVal(Config.AxisFunctions.SideSlide, 10);
-            ThisFrameInput.SetMaxAxisVal(Config.AxisFunctions.Aiming, 180);
-        }
-
         public void SpawnPlayer()
         {
             GameState = GameStates.Playing;
-            SetMaxInputs();
 
             Vector3 pos = CurrentArena.GetSpawn();
 
             if (Me == null)
             {
-                Me = new LocalPlayer("Me", Ships.TeamColors.Blue, World, ResourceCache);
+                var Ship = Ships.GetShipNode(ResourceCache, World, Ships.TeamColors.Blue, "Mk3");
+               
+
+                Me = Ship.Node.CreateComponent<LocalPlayer>();
+                Me.Setup("Me");
                 Me.Node.Position = pos;
                 Me.Node.AddChild(MainCamera.Node);
-                MainCamera.Node.Position = new Vector3(0, 1, 0);
+                MainCamera.Node.Position = new Vector3(0, 2, -5);
 
                 ThisFrameInput = Me.CurrentInput;
             }

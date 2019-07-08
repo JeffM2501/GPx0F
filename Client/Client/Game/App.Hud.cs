@@ -86,11 +86,20 @@ namespace Client.Game
             HudCenterMessage.Value = string.Empty;
             HudCenterMessage.Visible = false;
 
-            this.Update += HudUpdate;
+            Update += HudUpdate;
+            ApplicationExiting += App_ApplicationExiting;
+        }
+
+        private void App_ApplicationExiting(object sender, EventArgs e)
+        {
+            Update -= HudUpdate;
         }
 
         private void HudUpdate(UpdateEventArgs obj)
         {
+            if (Exiting)
+                return;
+
             RadarWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
             ChatWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
 

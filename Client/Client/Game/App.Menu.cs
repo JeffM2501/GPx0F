@@ -11,6 +11,9 @@ namespace Client.Game
 {
     public partial class App
     {
+        private bool Exiting = false;
+        public event EventHandler ApplicationExiting = null;
+
         private void Config_ApplyChanges(object sender, EventArgs e)
         {
             if (Config.Current.WinType == Config.WindowTypes.FullScreen != Graphics.Fullscreen)
@@ -19,10 +22,7 @@ namespace Client.Game
 
         private void Input_ExitRequested(ExitRequestedEventArgs obj)
         {
-            if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window)
-            {
-                Config.Current.WindowBounds = new System.Drawing.Rectangle(Graphics.WindowPosition.X, Graphics.WindowPosition.Y, Graphics.Width, Graphics.Height);
-            }
+            PreExit();
         }
 
         protected SoundSource BGMSource = null;
@@ -56,12 +56,21 @@ namespace Client.Game
 
         }
 
-        protected void DoExit()
+        protected void PreExit()
         {
+            Exiting = true;
+            ApplicationExiting?.Invoke(this, EventArgs.Empty);
+            StopGame();
+
             if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window)
             {
                 Config.Current.WindowBounds = new System.Drawing.Rectangle(Graphics.WindowPosition.X, Graphics.WindowPosition.Y, Graphics.Width, Graphics.Height);
             }
+        }
+
+        protected void DoExit()
+        {
+            PreExit();
             Exit();
         }
 
@@ -79,7 +88,9 @@ namespace Client.Game
             World.CreateComponent<Octree>();
 
             var physics = World.CreateComponent<PhysicsWorld>();
+           
             physics.SetGravity(new Vector3(0, -10, 0));
+            physics.Interpolation = false;
             StartGame();
         }
     }

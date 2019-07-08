@@ -27,6 +27,11 @@ namespace Client.Game
         public Player.FrameInput ThisFrameInput = new Player.FrameInput();
 
 
+        private bool IsAngleFunction(Config.AxisFunctions func)
+        {
+            return func == Config.AxisFunctions.Aiming || func == Config.AxisFunctions.Turning;
+        }
+
         private static bool useMouse = true;
         protected void UpdateFrameInput(float deltaT)
         {
@@ -50,6 +55,14 @@ namespace Client.Game
                         ThisFrameInput.AxisValues[Config.Current.MouseYAxisFunciton] = mouseYValue;
                     if (Config.Current.MouseZAxisFunciton != Config.AxisFunctions.None)
                         ThisFrameInput.AxisValues[Config.Current.MouseZAxisFunciton] = mouseZValue;
+
+                    // validate that everything is within input ranges
+
+                    foreach (Config.AxisFunctions func in Enum.GetValues(typeof(Config.AxisFunctions)))
+                    {
+                        if (Math.Abs(ThisFrameInput.AxisValues[func]) > (ThisFrameInput.GetMaxVal(func) * deltaT))
+                            ThisFrameInput.AxisValues[func] = ThisFrameInput.GetMaxVal(func) * Math.Sign(ThisFrameInput.AxisValues[func]) * deltaT;
+                    }
                 }
 
                 foreach (var button in Config.Current.MouseButtonFunctions)
@@ -64,7 +77,12 @@ namespace Client.Game
             {
                 float val = GetGetKeysetAxisValue(keyAxis.Keys);
                 if (val != 0)
-                    ThisFrameInput.AxisValues[keyAxis.Function] = val * ThisFrameInput.GetMaxVal(keyAxis.Function) * deltaT;
+                {
+                    ThisFrameInput.AxisValues[keyAxis.Function] = val * ThisFrameInput.GetMaxVal(keyAxis.Function);
+                    if (IsAngleFunction(keyAxis.Function))
+                        ThisFrameInput.AxisValues[keyAxis.Function] *= deltaT;
+                }
+                    
             }
 
             foreach (var button in Config.Current.KeyboardButtonFunctions)
@@ -92,7 +110,10 @@ namespace Client.Game
                 {
                     float val = joyStates[stickAxis.DeviceName].GetAxisPosition(stickAxis.ControlIndex);
                     if (Math.Abs(val) > 0.001)
-                        ThisFrameInput.AxisValues[stickAxis.Function] = val * ThisFrameInput.GetMaxVal(stickAxis.Function) * deltaT;
+                        ThisFrameInput.AxisValues[stickAxis.Function] = val * ThisFrameInput.GetMaxVal(stickAxis.Function);
+
+                    if (IsAngleFunction(stickAxis.Function))
+                        ThisFrameInput.AxisValues[stickAxis.Function] *= deltaT;
                 }
             }
 
@@ -111,18 +132,6 @@ namespace Client.Game
                         ThisFrameInput.ButtonValues[button.Function] = true;
                 }
             }
-
-
-            // validate that everything is within input ranges
-
-            foreach (Config.AxisFunctions func in Enum.GetValues(typeof(Config.AxisFunctions)))
-            {
-                if (Math.Abs(ThisFrameInput.AxisValues[func]) > (ThisFrameInput.GetMaxVal(func) * deltaT))
-                    ThisFrameInput.AxisValues[func] = ThisFrameInput.GetMaxVal(func) * Math.Sign(ThisFrameInput.AxisValues[func]) * deltaT;
-            }
-
-//             if (InputInGameMode)
-//                 Input.CenterMousePosition();
         }
 
         float GetGetKeysetAxisValue(Config.AxisKeyset keyset)

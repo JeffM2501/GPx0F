@@ -12,9 +12,6 @@ namespace Client.Game
 {
     public class LocalPlayer : Player
     {
-        public LocalPlayer(string name, Ships.TeamColors team, Node root, ResourceCache res) : base(name, team, root, res)
-        {
-          
-        }
+      
     }
 }

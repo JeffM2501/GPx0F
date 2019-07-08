@@ -42,6 +42,20 @@ namespace Client.Game
             return node;
         }
 
+        protected Node SetCollidable(Node node)
+        {
+            var sm = node.GetComponent<StaticModel>();
+
+            var collision = node.CreateComponent<CollisionShape>();
+            collision.SetConvexHull(sm.Model,0,Vector3.Zero,Vector3.Zero,Quaternion.Identity);
+
+            var phys = node.CreateComponent<RigidBody>();
+            phys.Kinematic = true;
+            phys.CollisionLayer = WorldColisionLayer;
+
+            return node;
+        }
+
         protected Node MakeBox(string name, Vector3 pos, Vector3 scale, string materialName, Vector2 uvRepeat)
         {
             var node = World.CreateChild("northWall");

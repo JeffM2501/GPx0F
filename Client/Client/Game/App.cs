@@ -39,8 +39,7 @@ namespace Client.Game
             SetupScene();
             SetupMainMenu();
 
-           
-            Input.KeyDown += Input_KeyDown;
+            Update += Game_Update;
 
             if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window && Program.RectIsVisible(Config.Current.WindowBounds))
                 this.Graphics.SetWindowPosition(new IntVector2(Config.Current.WindowBounds.X, Config.Current.WindowBounds.Y));
@@ -58,14 +57,13 @@ namespace Client.Game
 
         protected override void OnUpdate(float timeStep)
         {
-            base.OnUpdate(timeStep);
-        }
+            if (!Exiting)
+                base.OnUpdate(timeStep);
 
+            if (World != null && World.GetComponent<PhysicsWorld>() != null)
+                World.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
 
-        private void Input_KeyDown(KeyDownEventArgs args)
-        {
-            if (args.Key == Key.Esc)
-                DoExit();
+            Renderer.DrawDebugGeometry(false);
         }
 
         protected void SetMainViewport()
@@ -77,7 +75,6 @@ namespace Client.Game
         {
             World = new Scene();
             World.CreateComponent<Octree>();
-           
         }
     }
 }

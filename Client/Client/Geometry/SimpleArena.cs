@@ -46,47 +46,16 @@ namespace Client.Geometry
             SetCollidable(Ground, new Vector3(size * 2, 0.001f, size * 2), new Vector3(0,0,0), Quaternion.Identity);
 
             var node = MakeBox("eastWall", new Vector3(size - border, 0, 0.0f), new Vector3(wallHeight, wallHeight, ((size - border) * 2)), "Legacy/zone/Materials/OuterWall.xml", new Vector2(size * WallRepeat, wallHeight * WallRepeat));
-            SetCollidable(node, new Vector3(1, 10000, size * 2), new Vector3(size + 1, 500, 0), Quaternion.Identity);
+            SetCollidable(node);
 
-//             Node node = world.CreateChild("eastWall");
-//             node.Position = new Vector3(size - border, 0, 0.0f);
-//             node.Scale = new Vector3(wallHeight, wallHeight, ((size - border) * 2));
-//             model = node.CreateComponent<StaticModel>();
-//             model.Model = resources.GetModel("Models/Box.mdl");
-// 
-//             model.CastShadows = true; model.SetMaterial(resources.GetMaterial("Legacy/zone/Materials/OuterWall.xml").Clone());
-//             model.Material.SetUVTransform(Vector2.Zero, 0, new Vector2(size * WallRepeat, wallHeight * WallRepeat));
-//             SetCollidable(node, new Vector3(1, 10000, size * 2), new Vector3(size + 1, 500,0), Quaternion.Identity);
+            node = MakeBox("westWall", new Vector3(-size + border, 0, 0.0f), new Vector3(wallHeight, wallHeight, ((size - border) * 2)), "Legacy/zone/Materials/OuterWall.xml", new Vector2(size * WallRepeat, wallHeight * WallRepeat));
+            SetCollidable(node);
 
-            node = world.CreateChild("westWall");
-            node.Position = new Vector3(-size + border, 0, 0.0f);
-            node.Scale = new Vector3(wallHeight, wallHeight, ((size - border) * 2));
-            model = node.CreateComponent<StaticModel>();
-            model.Model = resources.GetModel("Models/Box.mdl");
-            model.CastShadows = true;
-            model.SetMaterial(resources.GetMaterial("Legacy/zone/Materials/OuterWall.xml").Clone());
-            model.Material.SetUVTransform(Vector2.Zero, 0, new Vector2(size * WallRepeat, wallHeight * WallRepeat));
-            SetCollidable(node, new Vector3(1, 10000, size * 2), new Vector3(-size-1, 500, 0), Quaternion.Identity);
-         
-            node = world.CreateChild("northWall");
-            node.Position = new Vector3(0, 0, size - border);
-            node.Scale = new Vector3(((size - border) * 2), wallHeight, wallHeight);
-            model = node.CreateComponent<StaticModel>();
-            model.Model = resources.GetModel("Models/Box.mdl");
-            model.CastShadows = true;
-            model.SetMaterial(resources.GetMaterial("Legacy/zone/Materials/OuterWall.xml").Clone());
-            model.Material.SetUVTransform(Vector2.Zero, 0, new Vector2(size * WallRepeat, wallHeight * WallRepeat));
-            SetCollidable(node, new Vector3(size * 2, 10000, 1), new Vector3(0, 500, size+1), Quaternion.Identity);
+            node = MakeBox("northWall", new Vector3(0, 0, size - border), new Vector3(((size - border) * 2), wallHeight, wallHeight), "Legacy/zone/Materials/OuterWall.xml", new Vector2(size * WallRepeat, wallHeight * WallRepeat));
+            SetCollidable(node);
 
-            node = world.CreateChild("southWall");
-            node.Position = new Vector3(0, 0, -size + border);
-            node.Scale = new Vector3(((size - border) * 2), wallHeight, wallHeight);
-            model = node.CreateComponent<StaticModel>();
-            model.Model = resources.GetModel("Models/Box.mdl");
-            model.CastShadows = true;
-            model.SetMaterial(resources.GetMaterial("Legacy/zone/Materials/OuterWall.xml").Clone());
-            model.Material.SetUVTransform(Vector2.Zero, 0, new Vector2(size * WallRepeat, wallHeight * WallRepeat));
-            SetCollidable(node, new Vector3(size * 2, 10000, 1), new Vector3(0, 500, -size - 1), Quaternion.Identity);
+            node = MakeBox("southWall", new Vector3(0, 0, -size + border), new Vector3(((size - border) * 2), wallHeight, wallHeight), "Legacy/zone/Materials/OuterWall.xml", new Vector2(size * WallRepeat, wallHeight * WallRepeat));
+            SetCollidable(node);
            
 
             var lightNode = world.CreateChild("DirectionalLight");

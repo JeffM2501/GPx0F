@@ -49,14 +49,15 @@ namespace Client
                 options.Multisampling = Config.Current.Multisample;
                 options.LimitFps = Config.Current.LimitFPS;
 
+                int exitCode = 0;
                 try
                 {
                     Game.App app = new Game.App(options);
-                    var exitCode = app.Run();
+                    exitCode = app.Run();
                 }
                 catch(Exception ex)
                 {
-                    
+                    MessageBox.Show(ex.ToString());
                 }
             }
         }
