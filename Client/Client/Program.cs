@@ -72,7 +72,7 @@ namespace Client
             return false;
         }
 
-        private static bool RectIsVisible(Rectangle f)
+        public static bool RectIsVisible(Rectangle f)
         {
             return PointIsVisible(new Point(f.Left, f.Top)) && PointIsVisible(new Point(f.Right, f.Top)) && PointIsVisible(new Point(f.Left, f.Bottom)) && PointIsVisible(new Point(f.Right, f.Bottom));
         }

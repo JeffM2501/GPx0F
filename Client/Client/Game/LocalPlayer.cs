@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Urho;
+using Urho.Physics;
 using Urho.Resources;
 
 namespace Client.Game
@@ -13,7 +14,7 @@ namespace Client.Game
     {
         public LocalPlayer(string name, Ships.TeamColors team, Node root, ResourceCache res) : base(name, team, root, res)
         {
-
+          
         }
     }
 }

@@ -157,4 +157,16 @@
   <data name="WindowTitle" xml:space="preserve">
     <value>GPx0F</value>
   </data>
+  <data name="SpawnMessage" xml:space="preserve">
+    <value>Spawn when ready</value>
+  </data>
+  <data name="LogSourceName" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="NetworkSourceName" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="SystemSourceName" xml:space="preserve">
+    <value>System</value>
+  </data>
 </root>

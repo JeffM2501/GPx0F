@@ -100,17 +100,14 @@ namespace Client {
         ///   Looks up a localized string similar to Main Codebase
         ///Copyright 2019 Jeffery Myers
         ///
-        ///Third Party Asset Copyright Holders
+        ///Libraries
+        ///UrhoSharp (c) Microsoft Corporation. All rights reserved.
+        ///
+        ///Third Party Asset Copyright Holders:
         ///BZFlag Assets, Copyright (c) 1993 - 2018 Tim Riker, Mozilla Public License version 2.0
-        ///
         ///Exo2 Font, Copyright (c) 2013, Natanael Gama (www.ndiscovered.com . info(at)ndiscovered.com) Open Font License
-        ///
-        ///https://freesound.org/s/425368/
-        ///Copyright 2018 Soundholder CCBySA 3.0
-        ///
-        ///Music from https://filmmusic.io:
-        ///&quot;Take a Chance&quot; by Kevin MacLeod (https://incompetech.com)
-        ///Licence: CC BY 4.0.
+        ///https://freesound.org/s/425368/ Copyright 2018 Soundholder CCBySA 3.0
+        ///Music from https://filmmusic.io: &quot;Take a Chance&quot; by Kevin MacLeod (https://incompete [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreditText {
             get {
@@ -133,6 +130,24 @@ namespace Client {
         internal static string JoinGame {
             get {
                 return ResourceManager.GetString("JoinGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notice.
+        /// </summary>
+        internal static string LogSourceName {
+            get {
+                return ResourceManager.GetString("LogSourceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection.
+        /// </summary>
+        internal static string NetworkSourceName {
+            get {
+                return ResourceManager.GetString("NetworkSourceName", resourceCulture);
             }
         }
         
@@ -178,6 +193,24 @@ namespace Client {
         internal static string SettingsTitle {
             get {
                 return ResourceManager.GetString("SettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spawn when ready.
+        /// </summary>
+        internal static string SpawnMessage {
+            get {
+                return ResourceManager.GetString("SpawnMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System.
+        /// </summary>
+        internal static string SystemSourceName {
+            get {
+                return ResourceManager.GetString("SystemSourceName", resourceCulture);
             }
         }
         

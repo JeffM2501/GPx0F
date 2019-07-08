@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
+using Urho;
+
 namespace Client
 {
     public class Config
@@ -50,6 +52,130 @@ namespace Client
         public int RadarSize = 300;
 
 
+        // input
+
+        public enum AxisFunctions
+        {
+            None,
+            Turning,
+            Acceleration,
+            Aiming,
+            SideSlide,
+        }
+
+        public enum ButtonFunctions
+        {
+            None,
+            Jump,
+            PrimaryFire,
+            SecondaryFire,
+            Drop,
+            Accessory,
+            Spawn,
+            StartChat,
+            SendChat,
+            Menu,
+            MenuBack,
+            MenuAccept,
+            ToggleReverseThrottle,
+            HoldReverseThrottle,
+        }
+
+        public AxisFunctions MouseXAxisFunciton = AxisFunctions.Turning;
+        public AxisFunctions MouseYAxisFunciton = AxisFunctions.Aiming;
+        public AxisFunctions MouseZAxisFunciton = AxisFunctions.None;
+
+        public float MouseXSensitivity = 100.0f;
+        public float MouseYSensitivity = 1.0f;
+        public float MouseZSensitivity = 1.0f;
+
+        public class MouseButtonMapItem
+        {
+            public ButtonFunctions Function = ButtonFunctions.None;
+            public MouseButton Button = MouseButton.Left;
+        }
+
+        public MouseButtonMapItem[] MouseButtonFunctions = new MouseButtonMapItem[]
+        {
+            new MouseButtonMapItem() { Function = ButtonFunctions.PrimaryFire, Button = MouseButton.Left },
+            new MouseButtonMapItem() { Function = ButtonFunctions.SecondaryFire, Button = MouseButton.Right },
+            new MouseButtonMapItem() { Function = ButtonFunctions.Drop, Button = MouseButton.Middle },
+            new MouseButtonMapItem() { Function = ButtonFunctions.Spawn, Button = MouseButton.Right },
+        };
+
+        public class AxisKeyset
+        {
+            public Key PositiveKey = Key.End;
+            public Key NegativeKey = Key.End;
+            public Key HalfSpeedKey = Key.End;
+
+            public static readonly AxisKeyset Empty = new AxisKeyset();
+        }
+
+        public class KeyboardAxisMapItem
+        {
+            public AxisFunctions Function = AxisFunctions.None;
+            public AxisKeyset Keys = null;
+        }
+
+        public KeyboardAxisMapItem[] KeyboardAxisFunctions = new KeyboardAxisMapItem[]
+        {
+            new KeyboardAxisMapItem(){Function = AxisFunctions.Acceleration, Keys = new AxisKeyset(){PositiveKey = Key.W, NegativeKey = Key.S }},
+            new KeyboardAxisMapItem(){Function = AxisFunctions.SideSlide, Keys = new AxisKeyset(){PositiveKey = Key.D, NegativeKey = Key.A }},
+            new KeyboardAxisMapItem(){Function = AxisFunctions.Aiming, Keys = new AxisKeyset(){PositiveKey = Key.Up, NegativeKey = Key.Down }},
+            new KeyboardAxisMapItem(){Function = AxisFunctions.Turning, Keys = new AxisKeyset(){PositiveKey = Key.Right, NegativeKey = Key.Left }}
+        };
+
+        public class KeyboardButtonMapItem
+        {
+            public ButtonFunctions Function = ButtonFunctions.None;
+            public Key ButtonKey = Key.End;
+        }
+
+        public KeyboardButtonMapItem[] KeyboardButtonFunctions = new KeyboardButtonMapItem[]
+        {
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Jump, ButtonKey = Key.Tab },
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.PrimaryFire, ButtonKey = Key.Space},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.SecondaryFire,ButtonKey = Key.Ctrl},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Accessory, ButtonKey = Key.Shift},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Drop, ButtonKey = Key.Q},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Spawn, ButtonKey = Key.Space},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Menu, ButtonKey = Key.Esc},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuBack, ButtonKey = Key.Esc},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuBack, ButtonKey = Key.Delete},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuAccept, ButtonKey = Key.Return},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuAccept, ButtonKey = Key.Return2},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuAccept, ButtonKey = Key.Kp_ENTER},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.StartChat, ButtonKey = Key.Return},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.SendChat, ButtonKey = Key.Return}
+        };
+
+
+        public class JoystickControlInfo
+        {
+            public AxisFunctions Function = AxisFunctions.None;
+
+            public string DeviceName = string.Empty;
+            public int ControlIndex = -1;
+
+            public static readonly JoystickControlInfo Empty = new JoystickControlInfo();
+        }
+
+        public class JoystickButtonInfo
+        {
+            public ButtonFunctions Function = ButtonFunctions.None;
+
+            public string DeviceName = string.Empty;
+            public bool IsHat = false;
+            public int ControlIndex = -1;
+            public byte ControlFactor = 1;
+
+            public static readonly JoystickButtonInfo Empty = new JoystickButtonInfo();
+        }
+
+        public JoystickControlInfo[] JoystickAxisFunctions = new JoystickControlInfo[0];
+        public JoystickButtonInfo[] JoystickButtonFunctions = new JoystickButtonInfo[0];
+
 
         public void Dirty()
         {
@@ -69,7 +195,7 @@ namespace Client
                 XML.Serialize(fs, this);
                 fs.Close();
             }
-            catch (Exception /*ex*/)
+            catch (Exception ex)
             {
 
             }
@@ -130,22 +256,23 @@ namespace Client
             FileInfo configFile = GetConfigFile();
             if (configFile.Exists)
             {
+                var reader = configFile.OpenText();
                 try
                 {
-
-                    var reader = configFile.OpenText();
                     Config cfg = XML.Deserialize(reader) as Config;
-                    reader.Close();
+                   
                     if (cfg != null)
                     {
                         Upgrade(cfg);
                         return cfg;
                     }
                 }
-                catch (Exception /*ex*/)
+                catch (Exception ex)
                 {
 
                 }
+
+                reader.Close();
             }
             return new Config();
         }

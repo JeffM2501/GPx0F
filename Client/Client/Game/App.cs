@@ -9,6 +9,7 @@ using Urho.Resources;
 using Urho.Actions;
 
 using Urho.Audio;
+using Urho.Physics;
 
 namespace Client.Game
 {
@@ -41,7 +42,7 @@ namespace Client.Game
            
             Input.KeyDown += Input_KeyDown;
 
-            if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window)
+            if (Config.Current != null && Config.Current.WinType == Config.WindowTypes.Window && Program.RectIsVisible(Config.Current.WindowBounds))
                 this.Graphics.SetWindowPosition(new IntVector2(Config.Current.WindowBounds.X, Config.Current.WindowBounds.Y));
 
             Graphics.WindowTitle = ClientResources.WindowTitle;
@@ -76,6 +77,7 @@ namespace Client.Game
         {
             World = new Scene();
             World.CreateComponent<Octree>();
+           
         }
     }
 }

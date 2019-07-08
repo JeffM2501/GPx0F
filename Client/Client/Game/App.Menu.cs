@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Urho;
 using Urho.Audio;
+using Urho.Physics;
 
 namespace Client.Game
 {
@@ -76,6 +77,9 @@ namespace Client.Game
             // start the game...
             World.Clear();
             World.CreateComponent<Octree>();
+
+            var physics = World.CreateComponent<PhysicsWorld>();
+            physics.SetGravity(new Vector3(0, -10, 0));
             StartGame();
         }
     }
