@@ -31,12 +31,12 @@ namespace Client.Game
         public event EventHandler Landed = null;
         public event EventHandler Jumped = null;
 
-        protected float ForwardMoveForce = 25f;
-        protected float BackwardsMoveForce = 10f;
-        protected float SidewaysMoveForce = 5f;
+        protected float ForwardMoveForce = 10;
+        protected float BackwardsMoveForce = 5;
+        protected float SidewaysMoveForce = 2f;
 
         protected float AirMoveForce = 1.0f;
-        protected float DampingForce = 5.0f;
+        protected float DampingForce = 6.0f;
         protected float JumpForce = 450.0f;
 
 
@@ -118,7 +118,7 @@ namespace Client.Game
 
             var shape = Node.CreateComponent<CollisionShape>();
             //shape.SetBox(new Vector3(1, 1.25f, 1), new Vector3(0, -0.25f, 0), Quaternion.Identity);
-            shape.SetCapsule(1, 1.25f, new Vector3(0,-0.25f,0), Quaternion.Identity);
+            shape.SetSphere(1.5f, new Vector3(0,0.5f,0), Quaternion.Identity);
 
             Node.NodeCollision += HandleNodeCollision;
 
@@ -137,10 +137,12 @@ namespace Client.Game
          
         protected override void OnFixedUpdate(PhysicsPreStepEventArgs e)
         {
-             base.OnFixedUpdate(e);
+            base.OnFixedUpdate(e);
+
+            float angleTurnDelta = CurrentInput.AxisValues[Config.AxisFunctions.Turning];
 
             // Turning / horizontal aiming
-            AimX += CurrentInput.AxisValues[Config.AxisFunctions.Turning];
+            AimX += angleTurnDelta;
 
             // Vertical aiming
             AimY += CurrentInput.AxisValues[Config.AxisFunctions.Aiming];
@@ -192,8 +194,6 @@ namespace Client.Game
                     else
                         forwardFactor *= BackwardsMoveForce;
 
-                    Hud.ChatPanel.AddChatText("Forward Factor " + forwardFactor.ToString(), -2);
-
                     float sideFactor = CurrentInput.AxisValues[Config.AxisFunctions.SideSlide] / CurrentInput.GetMaxVal(Config.AxisFunctions.SideSlide) * SidewaysMoveForce;
 
                     force += q * new Vector3(sideFactor, 0, forwardFactor);
@@ -206,15 +206,11 @@ namespace Client.Game
                          PhysicsBody.SetLinearVelocity(new Vector3(0, PhysicsBody.LinearVelocity.Y, 0));
                 }
 
-                if (OnGround)
-                    PhysicsBody.LinearDamping = DampingForce * 0.1f;
-                else
-                {
-                    PhysicsBody.LinearDamping = 0;
-                    Vector3 v = PhysicsBody.LinearVelocity;
-                    v.Normalize();
-                //    PhysicsBody.ApplyImpulse(new Vector3(-DampingForce * v.X, 0, -DampingForce * v.Z));
-                }
+                PhysicsBody.LinearDamping = 0;
+                Vector3 v = PhysicsBody.LinearVelocity;
+                v.Normalize();
+                PhysicsBody.ApplyImpulse(new Vector3(-DampingForce * v.X, 0, -DampingForce * v.Z));
+
 
                 if (CurrentInput.ButtonValues[Config.ButtonFunctions.Jump])
                 {
@@ -253,6 +249,32 @@ namespace Client.Game
                     }
                 }
             }
+
+            if (Ship != null)
+            {
+                float angleTiltRatio = 10;
+                float maxRotSpeed = 60 * e.TimeStep;
+                float resetSpeed = maxRotSpeed * 0.1f;
+                float maxTilt = 25 * (PhysicsBody.LinearVelocity.Length / 100.0f);
+
+                float desiredDelta = angleTurnDelta * angleTiltRatio * -1;
+                if (Math.Abs(desiredDelta) > maxRotSpeed)
+                    desiredDelta = maxRotSpeed * Math.Sign(desiredDelta);
+
+                Hud.ChatPanel.AddChatText("Tilt = " + desiredDelta.ToString(), -2);
+
+                Ship.SkidTilt += desiredDelta;
+                if (Math.Abs(Ship.SkidTilt) > maxTilt)
+                    Ship.SkidTilt = maxTilt * Math.Sign(Ship.SkidTilt);
+                else if (desiredDelta == 0)
+                {
+                    if (Math.Abs(Ship.SkidTilt) <= resetSpeed)
+                        Ship.SkidTilt = 0;
+                    else
+                        Ship.SkidTilt -= Math.Sign(Ship.SkidTilt) * resetSpeed;
+                }               
+            }
+
             LastOnGround = OnGround;
             ResetWorldCollision();
             CurrentInput.Clear();

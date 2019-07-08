@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Urho;
+using Urho.Physics;
 using Urho.Resources;
 
 namespace Client
@@ -31,6 +32,8 @@ namespace Client
 
             public float LifeTime = 0;
 
+            public float SkidTilt = 0;
+
             public ShipNode() : base()
             {
                 ReceiveSceneUpdates = true;
@@ -43,6 +46,7 @@ namespace Client
 
                 base.OnUpdate(timeStep);
                 ModelNode.Node.Position = new Vector3(0, (BobbleMag * 2) + ((float)Math.Sin(LifeTime * BoobleFreq) * BobbleMag), 0);
+                ModelNode.Node.Rotation = Quaternion.FromAxisAngle(Vector3.UnitZ, SkidTilt) * Quaternion.FromAxisAngle(Vector3.UnitY, -90);
             }
         }
 

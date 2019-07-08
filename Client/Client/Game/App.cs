@@ -45,6 +45,16 @@ namespace Client.Game
                 this.Graphics.SetWindowPosition(new IntVector2(Config.Current.WindowBounds.X, Config.Current.WindowBounds.Y));
 
             Graphics.WindowTitle = ClientResources.WindowTitle;
+
+            Engine.PostRenderUpdate += Engine_PostRenderUpdate;
+        }
+
+        private void Engine_PostRenderUpdate(PostRenderUpdateEventArgs obj)
+        {
+            if (World != null && World.GetComponent<PhysicsWorld>() != null)
+            {
+                World.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
+            }
         }
 
         protected override void Stop()
@@ -60,10 +70,7 @@ namespace Client.Game
             if (!Exiting)
                 base.OnUpdate(timeStep);
 
-            if (World != null && World.GetComponent<PhysicsWorld>() != null)
-                World.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
-
-            Renderer.DrawDebugGeometry(false);
+          
         }
 
         protected void SetMainViewport()
@@ -75,6 +82,7 @@ namespace Client.Game
         {
             World = new Scene();
             World.CreateComponent<Octree>();
+            World.CreateComponent<DebugRenderer>();
         }
     }
 }

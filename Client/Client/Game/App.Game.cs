@@ -125,7 +125,7 @@ namespace Client.Game
                 Me.Setup("Me");
                 Me.Node.Position = pos;
                 Me.Node.AddChild(MainCamera.Node);
-                MainCamera.Node.Position = new Vector3(0, 2, -5);
+                MainCamera.Node.Position = new Vector3(0, 1, -6);
 
                 ThisFrameInput = Me.CurrentInput;
             }

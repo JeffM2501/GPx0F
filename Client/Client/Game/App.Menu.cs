@@ -86,6 +86,7 @@ namespace Client.Game
             // start the game...
             World.Clear();
             World.CreateComponent<Octree>();
+            World.CreateComponent<DebugRenderer>();
 
             var physics = World.CreateComponent<PhysicsWorld>();
            

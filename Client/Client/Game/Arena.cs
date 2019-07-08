@@ -33,11 +33,12 @@ namespace Client.Game
 
         protected Node SetCollidable(Node node, Vector3 minBBox, Vector3 maxBBox, Quaternion rot)
         {
-            var collision = node.CreateComponent<CollisionShape>();
-            collision.SetBox(minBBox, maxBBox, rot);
             var phys = node.CreateComponent<RigidBody>();
             phys.Kinematic = true;
             phys.CollisionLayer = WorldColisionLayer;
+
+            var collision = node.CreateComponent<CollisionShape>();
+            collision.SetBox(minBBox, maxBBox, rot);
 
             return node;
         }
@@ -45,20 +46,19 @@ namespace Client.Game
         protected Node SetCollidable(Node node)
         {
             var sm = node.GetComponent<StaticModel>();
-
-            var collision = node.CreateComponent<CollisionShape>();
-            collision.SetConvexHull(sm.Model,0,Vector3.Zero,Vector3.Zero,Quaternion.Identity);
-
             var phys = node.CreateComponent<RigidBody>();
             phys.Kinematic = true;
             phys.CollisionLayer = WorldColisionLayer;
+
+            var collision = node.CreateComponent<CollisionShape>();
+            collision.SetTriangleMesh(sm.Model, 0, Vector3.One, Vector3.Zero, Quaternion.Identity);
 
             return node;
         }
 
         protected Node MakeBox(string name, Vector3 pos, Vector3 scale, string materialName, Vector2 uvRepeat)
         {
-            var node = World.CreateChild("northWall");
+            var node = World.CreateChild(name);
             node.Position = pos;
             node.Scale = scale;
             var model = node.CreateComponent<StaticModel>();
@@ -66,6 +66,14 @@ namespace Client.Game
             model.CastShadows = true;
             model.SetMaterial(ResCache.GetMaterial(materialName).Clone());
             model.Material.SetUVTransform(Vector2.Zero, 0, uvRepeat);
+
+            SetCollidable(node);
+//             var phys = node.CreateComponent<RigidBody>();
+//             phys.Kinematic = true;
+//             phys.CollisionLayer = WorldColisionLayer;
+// 
+//             var collision = node.CreateComponent<CollisionShape>();
+//             collision.SetBox(scale * -1, scale, Quaternion.Identity);
 
             return node;
         }
