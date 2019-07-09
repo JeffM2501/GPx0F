@@ -18,15 +18,18 @@ namespace Client.Game
 
         public RigidBody PhysicsBody = null;
 
-        protected bool OnGround = true;
-        protected bool IsSliding = false;
-        protected bool OkToJump = true;
+        public bool OnGround = true;
+        public bool IsSliding = false;
+        public bool OkToJump = true;
+
+        public bool DidMove = false;
 
         protected float AimX = 0;
         protected float AimY = 0;
 
         protected float InAirTime = 0;
         protected float OnGroundTime = 0;
+        protected float JumpTime = 0;
 
         public event EventHandler Landed = null;
         public event EventHandler Jumped = null;
@@ -35,12 +38,18 @@ namespace Client.Game
         protected float BackwardsMoveForce = 5;
         protected float SidewaysMoveForce = 2f;
 
-        protected float AirMoveForce = 1.0f;
-        protected float DampingForce = 6.0f;
-        protected float JumpForce = 450.0f;
+        protected float AirMoveForce = 0.7f;
+        protected float DampingForce = 7.0f;
+        protected float JumpForce = 1.0f;
+        protected float JumpForceLifeTime = 0.25f;
 
+        protected float MaxTilt = 5;
+        protected float MaxTiltSpeed = 20;
+        protected float MaxSpeedForTilt = 75;
 
-        public class FrameInput
+        protected Vector3 DrivingFriction = new Vector3(20, 0 , 10);
+
+        public class FrameInput : EventArgs
         {
             public Dictionary<Config.AxisFunctions, float> AxisValues = new Dictionary<Config.AxisFunctions, float>();
             public Dictionary<Config.ButtonFunctions, bool> ButtonValues = new Dictionary<Config.ButtonFunctions, bool>();
@@ -83,6 +92,12 @@ namespace Client.Game
             {
                 return AxisValues[Config.AxisFunctions.Acceleration] != 0 || AxisValues[Config.AxisFunctions.SideSlide] != 0;
             }
+
+            public event EventHandler<FrameInput> GetUserInput = null;
+            public virtual void GetInput(object sender)
+            {
+                GetUserInput?.Invoke(sender, this);
+            }
         }
 
         public FrameInput CurrentInput = new FrameInput();
@@ -91,6 +106,29 @@ namespace Client.Game
         {
             ReceiveSceneUpdates = true;
             ReceiveFixedUpdates = true;
+        }
+
+        public Color GetIconColor()
+        {
+            switch (Team)
+            {
+                case Ships.TeamColors.Black:
+                    return Color.Black;
+                case Ships.TeamColors.Blue:
+                    return Color.Blue;
+                case Ships.TeamColors.Green:
+                    return Color.Green;
+                case Ships.TeamColors.Purple:
+                    return Color.Red + Color.Blue;
+                case Ships.TeamColors.Red:
+                    return Color.Red;
+                case Ships.TeamColors.White:
+                    return Color.White;
+                case Ships.TeamColors.Yellow:
+                    return Color.Yellow;
+            }
+
+            return Color.Gray;
         }
 
         protected void SetMaxInputs()
@@ -112,11 +150,20 @@ namespace Client.Game
             Team = Ship.TeamColor;
 
             PhysicsBody = Node.CreateComponent<RigidBody>();
-            PhysicsBody.Mass = 10;
+            PhysicsBody.Mass = 1;
             PhysicsBody.Kinematic = false;
             PhysicsBody.SetAngularFactor(new Vector3(0, 1, 0));
 
+            PhysicsBody.RollingFriction = 100f;
+            PhysicsBody.Friction = 10f;
+            PhysicsBody.AngularDamping = 1;
+            PhysicsBody.LinearDamping = 0.25f;
+
+       //     PhysicsBody.SetAnisotropicFriction(DrivingFriction);
+
             var shape = Node.CreateComponent<CollisionShape>();
+            shape.Margin = 0.1f;
+           // shape.SetCapsule(1.5f, 2, Vector3.Zero, Quaternion.Identity);
             //shape.SetBox(new Vector3(1, 1.25f, 1), new Vector3(0, -0.25f, 0), Quaternion.Identity);
             shape.SetSphere(1.5f, new Vector3(0,0.5f,0), Quaternion.Identity);
 
@@ -134,10 +181,16 @@ namespace Client.Game
         }
 
         bool LastOnGround = false;
-         
+
         protected override void OnFixedUpdate(PhysicsPreStepEventArgs e)
         {
             base.OnFixedUpdate(e);
+            DoPhysicsUpdate(e.TimeStep);
+        }
+
+        protected virtual void DoPhysicsUpdate(float timeStep)
+        { 
+            CurrentInput.GetInput(this);
 
             float angleTurnDelta = CurrentInput.AxisValues[Config.AxisFunctions.Turning];
 
@@ -160,31 +213,30 @@ namespace Client.Game
                     // landed and we were flying for more than a moment, so trigger an event
                     Landed?.Invoke(this, EventArgs.Empty);
                 }
-                if (InAirTime > 0)
-                {
-               //     PhysicsBody.SetLinearFactor(new Vector3(1, 0, 1));
-                   PhysicsBody.SetLinearVelocity(new Vector3(PhysicsBody.LinearVelocity.X, 0, PhysicsBody.LinearVelocity.Z));
-
-                    
-                }
                 InAirTime = 0;
-                OnGroundTime += e.TimeStep;
+                OnGroundTime += timeStep;
             }
             else
             {
-                OnGroundTime = 0;
-                if (InAirTime == 0)
-                {
-                    PhysicsBody.SetLinearFactor(new Vector3(1, 1, 1));
-                }
-        
-                InAirTime += e.TimeStep;
+                OnGroundTime = 0;      
+                InAirTime += timeStep;
             }
+
+            if (JumpTime > 0 && !IsSliding)
+            {
+                PhysicsBody.ApplyImpulse(new Vector3(0, JumpForce, 0));
+                JumpTime -= timeStep;
+            }
+
+            DidMove = false;
+
 
             if (InAirTime < 0.3f && !IsSliding)
             {
                 if (CurrentInput.HasLinearInput())
                 {
+                    DidMove = true;
+
                     Vector3 force = new Vector3(0, 0, 0);
 
                     float forwardFactor = CurrentInput.AxisValues[Config.AxisFunctions.Acceleration] / CurrentInput.GetMaxVal(Config.AxisFunctions.Acceleration);
@@ -198,27 +250,17 @@ namespace Client.Game
 
                     force += q * new Vector3(sideFactor, 0, forwardFactor);
 
-                    PhysicsBody.ApplyImpulse(force);
+                    if (PhysicsBody.LinearVelocity.LengthFast  < 100)
+                        PhysicsBody.ApplyImpulse(force);
                 }
-                else
-                {
-                     if (PhysicsBody.LinearVelocity.Length < 0.1)
-                         PhysicsBody.SetLinearVelocity(new Vector3(0, PhysicsBody.LinearVelocity.Y, 0));
-                }
-
-                PhysicsBody.LinearDamping = 0;
-                Vector3 v = PhysicsBody.LinearVelocity;
-                v.Normalize();
-                PhysicsBody.ApplyImpulse(new Vector3(-DampingForce * v.X, 0, -DampingForce * v.Z));
-
 
                 if (CurrentInput.ButtonValues[Config.ButtonFunctions.Jump])
                 {
                     if (OkToJump && InAirTime < 0.1f)
                     {
-                        PhysicsBody.SetLinearFactor(new Vector3(1, 1, 1));
                         PhysicsBody.ApplyImpulse(new Vector3(0,JumpForce,0));
-                        InAirTime = 1.0f;
+                        JumpTime = JumpForceLifeTime;
+                        InAirTime = 0.5f;
 
                         Jumped?.Invoke(this, EventArgs.Empty);
                         Hud.ChatPanel.AddChatText("Jummped", -2);
@@ -253,15 +295,13 @@ namespace Client.Game
             if (Ship != null)
             {
                 float angleTiltRatio = 10;
-                float maxRotSpeed = 60 * e.TimeStep;
+                float maxRotSpeed = MaxTiltSpeed * timeStep;
                 float resetSpeed = maxRotSpeed * 0.1f;
-                float maxTilt = 25 * (PhysicsBody.LinearVelocity.Length / 100.0f);
+                float maxTilt = MaxTilt * (PhysicsBody.LinearVelocity.Length / MaxSpeedForTilt);
 
                 float desiredDelta = angleTurnDelta * angleTiltRatio * -1;
                 if (Math.Abs(desiredDelta) > maxRotSpeed)
                     desiredDelta = maxRotSpeed * Math.Sign(desiredDelta);
-
-                Hud.ChatPanel.AddChatText("Tilt = " + desiredDelta.ToString(), -2);
 
                 Ship.SkidTilt += desiredDelta;
                 if (Math.Abs(Ship.SkidTilt) > maxTilt)
@@ -301,7 +341,7 @@ namespace Client.Game
             foreach (var contact in eventData.Contacts)
             {
                 // contact point is below our center of mass
-                if (contact.ContactPosition.Y <= Node.Position.Y)
+             //   if (!(contact.ContactPosition.Y > Node.Position.Y))
                 {
                     float l = contact.ContactNormal.Y;
                     if (l >= 0.75f)
@@ -312,6 +352,9 @@ namespace Client.Game
                     {
                         Hud.ChatPanel.AddChatText("Sliding", -2);
                         IsSliding = true;
+                    }
+                    else
+                    {
                     }
 
                 }

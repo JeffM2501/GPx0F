@@ -17,6 +17,7 @@ namespace Client.Game
 
         protected Radar RadarWindow = null;
         protected ChatPanel ChatWindow = null;
+        protected StatusPanel StatusWindow = null;
 
         protected Text HudCenterMessage = null;
         protected float HudCenterMessageLife = -1;
@@ -65,15 +66,17 @@ namespace Client.Game
             playerList.SetPosition(0, 0);
 
             // add the status window
-            var statusWindow = new Window();
-            HudRoot.AddChild(statusWindow);
-            statusWindow.SetStyleAuto(null);
-            statusWindow.SetAlignment(HorizontalAlignment.Right, VerticalAlignment.Top);
+            StatusWindow = new StatusPanel();
+            HudRoot.AddChild(StatusWindow);
+            StatusWindow.SetStyleAuto(null);
+            StatusWindow.SetAlignment(HorizontalAlignment.Right, VerticalAlignment.Top);
             size = Math.Min((int)(Config.Current.RadarSize * 0.5f), UI.Root.Size.Y / 8);
-            statusWindow.SetSize(300, size);
+            StatusWindow.SetSize(300, size);
 
-            statusWindow.SetColor(new Color(Color.Green, 0.5f));
-            statusWindow.SetPosition(0, 0);
+            StatusWindow.SetColor(new Color(Color.Green, 0.5f));
+            StatusWindow.SetPosition(0, 0);
+            StatusWindow.Setup(Me, ResourceCache);
+
 
             Font font = ResourceCache.GetFont("Fonts/Exo2-Black.otf");
 
@@ -90,6 +93,12 @@ namespace Client.Game
             ApplicationExiting += App_ApplicationExiting;
         }
 
+        protected void SetHudPlayer()
+        {
+            if (StatusWindow != null)
+                StatusWindow.Setup(Me, ResourceCache);
+        }
+
         private void App_ApplicationExiting(object sender, EventArgs e)
         {
             Update -= HudUpdate;
@@ -102,6 +111,7 @@ namespace Client.Game
 
             RadarWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
             ChatWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
+            StatusWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
 
             if (HudCenterMessage != null && HudCenterMessage.Visible && HudCenterMessageLife > 0)
             {

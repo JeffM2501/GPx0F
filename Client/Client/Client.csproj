@@ -111,6 +111,7 @@
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\Hud\ChatPanel.cs" />
     <Compile Include="Game\Hud\Radar.cs" />
+    <Compile Include="Game\Hud\StatusPanel.cs" />
     <Compile Include="Game\LocalPlayer.cs" />
     <Compile Include="Game\Player.cs" />
     <Compile Include="Geometry\MenuBackground.cs" />

@@ -119,14 +119,12 @@ namespace Client.Game
             if (Me == null)
             {
                 var Ship = Ships.GetShipNode(ResourceCache, World, Ships.TeamColors.Blue, "Mk3");
-               
 
                 Me = Ship.Node.CreateComponent<LocalPlayer>();
                 Me.Setup("Me");
                 Me.Node.Position = pos;
-                Me.Node.AddChild(MainCamera.Node);
-                MainCamera.Node.Position = new Vector3(0, 1, -6);
-
+                Me.AttachCamera(MainCamera);
+                SetHudPlayer();
                 ThisFrameInput = Me.CurrentInput;
             }
 

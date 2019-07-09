@@ -36,6 +36,7 @@ namespace Client.Game
 
             Menus.Stack.Setup(this);
 
+            World = new Scene();
             SetupScene();
             SetupMainMenu();
 
@@ -80,9 +81,17 @@ namespace Client.Game
 
         public void SetupScene()
         {
-            World = new Scene();
+            // start the game...
+            World.Clear();
             World.CreateComponent<Octree>();
             World.CreateComponent<DebugRenderer>();
+
+            var physics = World.CreateComponent<PhysicsWorld>();
+
+            physics.SetGravity(new Vector3(0, -10, 0));
+            physics.Interpolation = false;
+            physics.Fps = 120;
+            physics.SplitImpulse = true;
         }
     }
 }

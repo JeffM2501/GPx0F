@@ -29,8 +29,7 @@ namespace Client.Game
 
         private void SetupMainMenu()
         {
-            World.Clear();
-            World.CreateComponent<Octree>();
+            SetupScene();
             MainCamera = Geometry.MenuBackground.CreateCamera(World);
             SetMainViewport();
 
@@ -82,16 +81,7 @@ namespace Client.Game
         private void Main_StartGame(object sender, EventArgs e)
         {
             Menus.Stack.ClearAll();
-
-            // start the game...
-            World.Clear();
-            World.CreateComponent<Octree>();
-            World.CreateComponent<DebugRenderer>();
-
-            var physics = World.CreateComponent<PhysicsWorld>();
-           
-            physics.SetGravity(new Vector3(0, -10, 0));
-            physics.Interpolation = false;
+            SetupScene();
             StartGame();
         }
     }

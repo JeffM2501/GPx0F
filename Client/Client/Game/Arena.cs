@@ -31,14 +31,23 @@ namespace Client.Game
             return new Vector3(0, 2, 0);
         }
 
-        protected Node SetCollidable(Node node, Vector3 minBBox, Vector3 maxBBox, Quaternion rot)
+        protected void AddStaticPhysics(Node node)
         {
             var phys = node.CreateComponent<RigidBody>();
             phys.Kinematic = true;
             phys.CollisionLayer = WorldColisionLayer;
+            phys.SetLinearFactor(Vector3.Zero);
+            phys.SetAngularFactor(Vector3.Zero);
+            phys.UseGravity = false;
+            phys.Mass = 100000000;
+        }
+
+        protected Node SetCollidable(Node node, Vector3 size, Vector3 origin, Quaternion rot)
+        {
+            AddStaticPhysics(node);
 
             var collision = node.CreateComponent<CollisionShape>();
-            collision.SetBox(minBBox, maxBBox, rot);
+            collision.SetBox(size, origin, rot);
 
             return node;
         }
@@ -46,9 +55,7 @@ namespace Client.Game
         protected Node SetCollidable(Node node)
         {
             var sm = node.GetComponent<StaticModel>();
-            var phys = node.CreateComponent<RigidBody>();
-            phys.Kinematic = true;
-            phys.CollisionLayer = WorldColisionLayer;
+            AddStaticPhysics(node);
 
             var collision = node.CreateComponent<CollisionShape>();
             collision.SetTriangleMesh(sm.Model, 0, Vector3.One, Vector3.Zero, Quaternion.Identity);
@@ -67,15 +74,46 @@ namespace Client.Game
             model.SetMaterial(ResCache.GetMaterial(materialName).Clone());
             model.Material.SetUVTransform(Vector2.Zero, 0, uvRepeat);
 
-            SetCollidable(node);
-//             var phys = node.CreateComponent<RigidBody>();
-//             phys.Kinematic = true;
-//             phys.CollisionLayer = WorldColisionLayer;
-// 
-//             var collision = node.CreateComponent<CollisionShape>();
-//             collision.SetBox(scale * -1, scale, Quaternion.Identity);
+            SetCollidable(node, Vector3.One,Vector3.Zero,Quaternion.Identity);
 
             return node;
         }
+
+        protected void MakeBorders (float size, float wallHeight, string materialName, float uvRepeat)
+        {
+            Vector3 box = new Vector3(wallHeight, wallHeight, wallHeight);
+
+            var node = MakeBox("eastWall", new Vector3(size, wallHeight / 2, 0.0f), new Vector3(wallHeight, wallHeight, ((size) * 2)), materialName, new Vector2(size * uvRepeat, wallHeight * uvRepeat));
+            node.GetComponent<CollisionShape>().SetBox(new Vector3(1, 20 ,1), new Vector3(0, 9 ,0),Quaternion.Identity);
+
+            node = MakeBox("westWall", new Vector3(-size, wallHeight / 2, 0.0f), new Vector3(wallHeight, wallHeight, ((size) * 2)), materialName, new Vector2(size * uvRepeat, wallHeight * uvRepeat));
+            node.GetComponent<CollisionShape>().SetBox(new Vector3(1, 20, 1), new Vector3(0, 9, 0), Quaternion.Identity);
+
+            node = MakeBox("northWall", new Vector3(0, wallHeight / 2, size ), new Vector3(((size ) * 2), wallHeight, wallHeight), materialName, new Vector2(size * uvRepeat, wallHeight * uvRepeat));
+            node.GetComponent<CollisionShape>().SetBox(new Vector3(1, 20, 1), new Vector3(0, 9, 0), Quaternion.Identity);
+
+            node = MakeBox("southWall", new Vector3(0, wallHeight / 2, -size), new Vector3(((size) * 2), wallHeight, wallHeight), materialName, new Vector2(size * uvRepeat, wallHeight * uvRepeat));
+            node.GetComponent<CollisionShape>().SetBox(new Vector3(1, 20, 1), new Vector3(0, 9, 0), Quaternion.Identity);
+
+        }
+
+        protected Node MakePlaneGround( float size, string material, float repeat)
+        {
+            Node ground = World.CreateChild("ground");
+            ground.Position = new Vector3(0.0f, 0.0f, 0.0f);
+            ground.Scale = new Vector3(size * 4, 1, size * 4);
+
+            var model = ground.CreateComponent<StaticModel>();
+            model.Model = ResCache.GetModel("Models/Plane.mdl");
+            model.SetMaterial(ResCache.GetMaterial(material).Clone());
+            model.Material.SetUVTransform(Vector2.Zero, 0, size * repeat);
+            AddStaticPhysics(ground);
+            var collision = ground.CreateComponent<CollisionShape>();
+            collision.SetStaticPlane(Vector3.Zero, Quaternion.Identity);
+            ground.GetComponent<RigidBody>().Friction = 1;
+
+            return ground;
+        }
+
     }
 }
