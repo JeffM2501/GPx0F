@@ -41,6 +41,16 @@ namespace Client
         public int Multisample = 16;
         public bool LimitFPS = false;
 
+        public enum ShadowQualities
+        {
+            Low,
+            Medium,
+            High,
+        }
+
+        public ShadowQualities ShadowQuality = ShadowQualities.Medium;
+        public int ShadowMapSize = 2;
+
 
         // audio
         public float MasterVolume = 1.0f;

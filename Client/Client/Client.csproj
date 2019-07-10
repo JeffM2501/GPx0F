@@ -105,11 +105,13 @@
     </Compile>
     <Compile Include="Config.cs" />
     <Compile Include="Game\App.cs" />
+    <Compile Include="Game\App.Debug.cs" />
     <Compile Include="Game\App.Game.cs" />
     <Compile Include="Game\App.Input.cs" />
     <Compile Include="Game\App.Menu.cs" />
     <Compile Include="Game\Arena.cs" />
     <Compile Include="Game\Hud\ChatPanel.cs" />
+    <Compile Include="Game\Hud\FillBar.cs" />
     <Compile Include="Game\Hud\Radar.cs" />
     <Compile Include="Game\Hud\StatusPanel.cs" />
     <Compile Include="Game\LocalPlayer.cs" />

@@ -34,18 +34,20 @@ namespace Client.Game
         public event EventHandler Landed = null;
         public event EventHandler Jumped = null;
 
-        protected float ForwardMoveForce = 10;
-        protected float BackwardsMoveForce = 5;
-        protected float SidewaysMoveForce = 2f;
+        protected float ForwardMoveForce = 8;
+        protected float BackwardsMoveForce = 4;
+        protected float SidewaysMoveForce = 1f;
 
         protected float AirMoveForce = 0.7f;
         protected float DampingForce = 7.0f;
         protected float JumpForce = 1.0f;
-        protected float JumpForceLifeTime = 0.25f;
+        protected float JumpForceLifeTime = 0.125f;
 
         protected float MaxTilt = 5;
         protected float MaxTiltSpeed = 20;
         protected float MaxSpeedForTilt = 75;
+
+        protected float MaxVel = 50;
 
         protected Vector3 DrivingFriction = new Vector3(20, 0 , 10);
 
@@ -250,7 +252,7 @@ namespace Client.Game
 
                     force += q * new Vector3(sideFactor, 0, forwardFactor);
 
-                    if (PhysicsBody.LinearVelocity.LengthFast  < 100)
+                    if (PhysicsBody.LinearVelocity.LengthFast < MaxVel)
                         PhysicsBody.ApplyImpulse(force);
                 }
 
@@ -287,7 +289,8 @@ namespace Client.Game
                         force += q * new Vector3(sideFactor, 0, forwardFactor);
                         force.Normalize();
                         force *= AirMoveForce;
-                        PhysicsBody.ApplyImpulse(force);
+                        if (PhysicsBody.LinearVelocity.LengthFast < MaxVel)
+                            PhysicsBody.ApplyImpulse(force);
                     }
                 }
             }

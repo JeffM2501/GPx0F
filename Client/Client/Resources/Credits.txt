@@ -9,3 +9,4 @@ BZFlag Assets, Copyright (c) 1993 - 2018 Tim Riker, Mozilla Public License versi
 Exo2 Font, Copyright (c) 2013, Natanael Gama (www.ndiscovered.com . info(at)ndiscovered.com) Open Font License
 https://freesound.org/s/425368/ Copyright 2018 Soundholder CCBySA 3.0
 Music from https://filmmusic.io: "Take a Chance" by Kevin MacLeod (https://incompetech.com) Licence: CC BY 4.0
+Game-Icons.net Icons made by Lorc, sbed, Delapouite  Licence: CC BY 3.0

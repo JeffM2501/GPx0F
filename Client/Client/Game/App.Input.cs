@@ -35,10 +35,11 @@ namespace Client.Game
         private static bool useMouse = true;
         protected void UpdateFrameInput(float deltaT)
         {
+            if (Input.GetKeyPress(Urho.Key.F1))
+                DrawDebug = !DrawDebug;
+
             if (ThisFrameInput == null)
                 return;
-
-    //        ThisFrameInput.Clear();
 
             if (InputInGameMode)
             {

@@ -22,6 +22,8 @@ namespace Client.Game
         protected Text HudCenterMessage = null;
         protected float HudCenterMessageLife = -1;
 
+        protected Sprite Crosshairs = null;
+
 		protected void SetupHud()
         {
             if (HudRoot != null)
@@ -88,6 +90,16 @@ namespace Client.Game
             HudCenterMessage.SetColor(Color.White);
             HudCenterMessage.Value = string.Empty;
             HudCenterMessage.Visible = false;
+
+
+            Crosshairs = new Sprite();
+            HudRoot.AddChild(Crosshairs);
+            Crosshairs.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+            Crosshairs.Texture = ResourceCache.GetTexture2D("UI/RoundCrosshair1.png");
+            Crosshairs.SetSize(HudRoot.Height / 6, HudRoot.Height / 6);
+            Crosshairs.SetHotSpot(Crosshairs.Width / 2, Crosshairs.Height / 2);
+            Crosshairs.SetColor(new Color(Color.Gray, 0.5f));
+            Crosshairs.BlendMode = BlendMode.Addalpha;
 
             Update += HudUpdate;
             ApplicationExiting += App_ApplicationExiting;

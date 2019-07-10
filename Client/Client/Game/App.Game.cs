@@ -28,12 +28,17 @@ namespace Client.Game
         {
             SetupHud();
             MainCamera = Geometry.MenuBackground.CreateCamera(World);
+           
             SetMainViewport();
 
+            float ArenaSize = 800;
             CurrentArena = new Geometry.SimpleArena();
-            CurrentArena.Setup(ResourceCache, World, 400);
+            CurrentArena.Setup(ResourceCache, World, ArenaSize);
 
-            Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
+            MainCamera.FarClip = ArenaSize * 2;
+            MainCamera.NearClip = 0.1f;
+
+           Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
 
             SetInputMode(true);
             // for now set the state to limboed and wait for a spawn

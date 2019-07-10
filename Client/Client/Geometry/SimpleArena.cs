@@ -22,7 +22,7 @@ namespace Client.Geometry
 
         public override bool Setup(ResourceCache resources, Scene world, float size)
         {
-            return Setup(resources, world, size, 25, 50);
+            return Setup(resources, world, size, 20, 50);
         }
 
         public bool Setup(ResourceCache resources, Scene world, float size, float wallHeight, float border)
@@ -45,8 +45,11 @@ namespace Client.Geometry
             MainLight = lightNode.CreateComponent<Light>();
             MainLight.LightType = LightType.Directional;
             MainLight.CastShadows = true;
-            MainLight.ShadowBias = new BiasParameters(0.00025f, 0.5f);
-            MainLight.ShadowCascade = new CascadeParameters(10, 50, 200, 0, .8f);
+      //      MainLight.ShadowBias = new BiasParameters(0.00025f, 0.5f);
+      //      MainLight.ShadowCascade = new CascadeParameters(10, 50, 200, size, .8f);
+            MainLight.ShadowDistance = size * 3;
+            MainLight.ShadowFadeDistance = size * 2;
+            MainLight.ShadowResolution = 1.0f;
           //  MainLight.Brightness = 0.75f;
              MainLight.SpecularIntensity = 0.75f;
 

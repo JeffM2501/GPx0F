@@ -34,8 +34,9 @@ namespace Client.Game
 
             Input.ExitRequested += Input_ExitRequested;
 
-            Menus.Stack.Setup(this);
+            SetupRenderer();
 
+            Menus.Stack.Setup(this);
             World = new Scene();
             SetupScene();
             SetupMainMenu();
@@ -46,17 +47,9 @@ namespace Client.Game
                 this.Graphics.SetWindowPosition(new IntVector2(Config.Current.WindowBounds.X, Config.Current.WindowBounds.Y));
 
             Graphics.WindowTitle = ClientResources.WindowTitle;
-
-            Engine.PostRenderUpdate += Engine_PostRenderUpdate;
         }
 
-        private void Engine_PostRenderUpdate(PostRenderUpdateEventArgs obj)
-        {
-            if (World != null && World.GetComponent<PhysicsWorld>() != null)
-            {
-                World.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
-            }
-        }
+
 
         protected override void Stop()
         {
@@ -70,13 +63,39 @@ namespace Client.Game
         {
             if (!Exiting)
                 base.OnUpdate(timeStep);
-
-          
         }
 
         protected void SetMainViewport()
         {
             Renderer.SetViewport(0, new Viewport(Context, World, MainCamera, null));
+        }
+
+        public void SetupRenderer()
+        {
+            if (Config.Current == null)
+                return;
+
+            switch (Config.Current.ShadowQuality)
+            {
+                case Config.ShadowQualities.Low:
+                    Renderer.ShadowQuality = ShadowQuality.SimpleN16Bit;
+                    break;
+
+                case Config.ShadowQualities.Medium:
+                    Renderer.ShadowQuality = ShadowQuality.PcfN24Bit;
+                    break;
+
+                case Config.ShadowQualities.High:
+                    Renderer.ShadowQuality = ShadowQuality.BlurVsm;
+                    break;
+
+            }
+
+            if (Config.Current.ShadowMapSize < 1)
+                Config.Current.ShadowMapSize = 1;
+
+            Renderer.ShadowMapSize = Config.Current.ShadowMapSize * 1024;
+            SetupDebug();
         }
 
         public void SetupScene()
