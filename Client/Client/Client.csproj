@@ -120,7 +120,11 @@
     <Compile Include="Geometry\SimpleArena.cs" />
     <Compile Include="Menus\Credits.cs" />
     <Compile Include="Menus\Main.cs" />
-    <Compile Include="Menus\Settings\General.cs" />
+    <Compile Include="Menus\Settings\AccountSettings.cs" />
+    <Compile Include="Menus\Settings\AudioSettings.cs" />
+    <Compile Include="Menus\Settings\ControlSettings.cs" />
+    <Compile Include="Menus\Settings\RenderSettings.cs" />
+    <Compile Include="Menus\Settings\SettingsFrame.cs" />
     <Compile Include="Menus\Stack.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

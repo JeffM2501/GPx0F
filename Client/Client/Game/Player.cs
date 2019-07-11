@@ -136,7 +136,7 @@ namespace Client.Game
         protected void SetMaxInputs()
         {
             CurrentInput.SetMaxAxisVal(Config.AxisFunctions.Acceleration, 50);
-            CurrentInput.SetMaxAxisVal(Config.AxisFunctions.Turning, 360);
+            CurrentInput.SetMaxAxisVal(Config.AxisFunctions.Turning, 720);
             CurrentInput.SetMaxAxisVal(Config.AxisFunctions.SideSlide, 10);
             CurrentInput.SetMaxAxisVal(Config.AxisFunctions.Aiming, 180);
         }

@@ -35,12 +35,12 @@ namespace Client.Menus
 
             AddVersionMarker();
 
-            var buttons = CreateButtonColumnn(-150, 100, 400, 75, 25, new string[] { ClientResources.NewGame, ClientResources.JoinGame, ClientResources.Settings, ClientResources.Credits, ClientResources.Exit }, HorizontalAlignment.Right, VerticalAlignment.Top);
+            var buttons = CreateButtonColumnn(-150, 100, 400, 50, 25, new string[] { ClientResources.NewGame, ClientResources.JoinGame, ClientResources.Tutorials, ClientResources.Settings, ClientResources.Credits, ClientResources.Exit }, HorizontalAlignment.Right, VerticalAlignment.Top);
 
             buttons[0].Pressed += NewGame_Pressed;
-            buttons[2].Pressed += Settings_Pressed;
-            buttons[3].Pressed += CreditsPressed;
-            buttons[4].Pressed += Quit_Pressed;
+            buttons[3].Pressed += Settings_Pressed;
+            buttons[4].Pressed += CreditsPressed;
+            buttons[5].Pressed += Quit_Pressed;
         }
 
         private void CreditsPressed(PressedEventArgs obj)
@@ -50,7 +50,7 @@ namespace Client.Menus
 
         private void Settings_Pressed(PressedEventArgs obj)
         {
-            Stack.Push(new Settings.General());
+            Stack.Push(new Settings.SettingsFrame());
         }
 
         private void NewGame_Pressed(PressedEventArgs obj)

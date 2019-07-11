@@ -75,26 +75,27 @@ namespace Client.Game
             if (Config.Current == null)
                 return;
 
+            int shadowMapBase = 1;
             switch (Config.Current.ShadowQuality)
             {
                 case Config.ShadowQualities.Low:
+                    shadowMapBase = 2;
                     Renderer.ShadowQuality = ShadowQuality.SimpleN16Bit;
                     break;
 
                 case Config.ShadowQualities.Medium:
-                    Renderer.ShadowQuality = ShadowQuality.PcfN24Bit;
+                    Renderer.ShadowQuality = ShadowQuality.PcfN16Bit;
+                    shadowMapBase = 8;
                     break;
 
                 case Config.ShadowQualities.High:
-                    Renderer.ShadowQuality = ShadowQuality.BlurVsm;
+                    shadowMapBase = 16;
+                    Renderer.ShadowQuality = ShadowQuality.PcfN24Bit;
+      
                     break;
-
             }
-
-            if (Config.Current.ShadowMapSize < 1)
-                Config.Current.ShadowMapSize = 1;
-
-            Renderer.ShadowMapSize = Config.Current.ShadowMapSize * 1024;
+ 
+             Renderer.ShadowMapSize = (shadowMapBase) * 1024;
             SetupDebug();
         }
 

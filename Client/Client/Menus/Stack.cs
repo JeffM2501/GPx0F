@@ -155,7 +155,9 @@ namespace Client.Menus
                 List<Button> buttons = new List<Button>();
                 foreach (var text in texts)
                 {
-                    buttons.Add(CreateButton(x, y, xSize, ySize, text, hAlign, vAlign, root));
+                    var button = CreateButton(x, y, xSize, ySize, text, hAlign, vAlign, root);
+                    button.Name = text;
+                    buttons.Add(button);
                     y += ySize + spacing;
                 }
                 return buttons;
@@ -199,12 +201,12 @@ namespace Client.Menus
                 RootElement.AddChild(versionText);
             }
 
-            protected void AddHeaderString(string text, int size = -1)
+            protected Text AddHeaderString(string text, int size = -1)
             {
-                AddHeaderString(text, Color.FromHex("485872"), size);
+                return AddHeaderString(text, Color.FromHex("485872"), size);
             }
 
-            protected void AddHeaderString(string text, Color color, int size = -1)
+            protected Text AddHeaderString(string text, Color color, int size = -1)
             {
                 if (size < 0)
                     size = 120;
@@ -219,6 +221,8 @@ namespace Client.Menus
                 titleText.SetMaxAnchor(0, 0);
                 titleText.SetMinAnchor(0, 0);
                 RootElement.AddChild(titleText);
+
+                return titleText;
             }
         }
     }

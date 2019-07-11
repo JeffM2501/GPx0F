@@ -61,6 +61,15 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account.
+        /// </summary>
+        internal static string AccountSettingsName {
+            get {
+                return ResourceManager.GetString("AccountSettingsName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Apply.
         /// </summary>
         internal static string Apply {
@@ -70,11 +79,29 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sound.
+        /// </summary>
+        internal static string AudioSettingsName {
+            get {
+                return ResourceManager.GetString("AudioSettingsName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back.
         /// </summary>
         internal static string Back {
             get {
                 return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls.
+        /// </summary>
+        internal static string ControlSettingsName {
+            get {
+                return ResourceManager.GetString("ControlSettingsName", resourceCulture);
             }
         }
         
@@ -152,7 +179,7 @@ namespace Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Game.
+        ///   Looks up a localized string similar to Quick Start.
         /// </summary>
         internal static string NewGame {
             get {
@@ -175,6 +202,15 @@ namespace Client {
         internal static string NoAssetPathErrorTitle {
             get {
                 return ResourceManager.GetString("NoAssetPathErrorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rendering.
+        /// </summary>
+        internal static string RenderSettingsName {
+            get {
+                return ResourceManager.GetString("RenderSettingsName", resourceCulture);
             }
         }
         
@@ -211,6 +247,15 @@ namespace Client {
         internal static string SystemSourceName {
             get {
                 return ResourceManager.GetString("SystemSourceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tutorials....
+        /// </summary>
+        internal static string Tutorials {
+            get {
+                return ResourceManager.GetString("Tutorials", resourceCulture);
             }
         }
         

@@ -140,7 +140,7 @@
     <value>Join Game...</value>
   </data>
   <data name="NewGame" xml:space="preserve">
-    <value>New Game</value>
+    <value>Quick Start</value>
   </data>
   <data name="NoAssetPathError" xml:space="preserve">
     <value>The asset folder was not found at $F</value>
@@ -168,5 +168,20 @@
   </data>
   <data name="SystemSourceName" xml:space="preserve">
     <value>System</value>
+  </data>
+  <data name="Tutorials" xml:space="preserve">
+    <value>Tutorials...</value>
+  </data>
+  <data name="AccountSettingsName" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="AudioSettingsName" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="RenderSettingsName" xml:space="preserve">
+    <value>Rendering</value>
+  </data>
+  <data name="ControlSettingsName" xml:space="preserve">
+    <value>Controls</value>
   </data>
 </root>

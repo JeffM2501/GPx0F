@@ -50,14 +50,16 @@ namespace Client
                 options.LimitFps = Config.Current.LimitFPS;
 
                 int exitCode = 0;
+                Game.App app = null;
                 try
                 {
-                    Game.App app = new Game.App(options);
+                    app = new Game.App(options);
                     exitCode = app.Run();
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show(ex.ToString());
+                    if (app == null || !app.IsExiting)
+                        MessageBox.Show(ex.ToString());
                 }
             }
         }
