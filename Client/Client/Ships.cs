@@ -34,6 +34,8 @@ namespace Client
 
             public float SkidTilt = 0;
 
+            public ResourceCache Resources = null;
+
             public ShipNode() : base()
             {
                 ReceiveSceneUpdates = true;
@@ -55,6 +57,7 @@ namespace Client
             string path = "Models/Ships/" + shipType;
             Node coreNode = root.CreateChild("ship");
             ShipNode node = coreNode.CreateComponent<ShipNode>();
+            node.Resources = resources;
             node.TeamColor = team;
 
             node.ModelNode = coreNode.CreateChild("mesh").CreateComponent<StaticModel>();

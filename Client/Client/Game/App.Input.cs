@@ -143,7 +143,7 @@ namespace Client.Game
             if (pos && neg || !pos && !neg)
                 return 0;
 
-            float val = Input.GetKeyDown(keyset.HalfSpeedKey) ? 0.5f : 1;
+            float val = keyset.HalfSpeedKey != Urho.Key.Application && Input.GetKeyDown(keyset.HalfSpeedKey) ? 0.5f : 1;
 
             return val * (neg ? -1 : 1);
         }

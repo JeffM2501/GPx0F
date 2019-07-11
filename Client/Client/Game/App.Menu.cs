@@ -30,7 +30,8 @@ namespace Client.Game
         private void SetupMainMenu()
         {
             SetupScene();
-            MainCamera = Geometry.MenuBackground.CreateCamera(World);
+            MainCamera = CreateCamera(World);
+            MainCamera.Node.SetWorldPosition(new Vector3(0, 1, -5));
             SetMainViewport();
 
             CurrentArena = new Geometry.MenuBackground();

@@ -49,7 +49,6 @@ namespace Client
         }
 
         public ShadowQualities ShadowQuality = ShadowQualities.Medium;
-        public int ShadowMapSize = 2;
 
 
         // audio
@@ -87,6 +86,7 @@ namespace Client
             Menu,
             MenuBack,
             MenuAccept,
+            Boost,
             ToggleReverseThrottle,
             HoldReverseThrottle,
         }
@@ -117,7 +117,7 @@ namespace Client
         {
             public Key PositiveKey = Key.End;
             public Key NegativeKey = Key.End;
-            public Key HalfSpeedKey = Key.End;
+            public Key HalfSpeedKey = Key.Application;
 
             public static readonly AxisKeyset Empty = new AxisKeyset();
         }
@@ -157,7 +157,10 @@ namespace Client
             new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuAccept, ButtonKey = Key.Return2},
             new KeyboardButtonMapItem(){Function = ButtonFunctions.MenuAccept, ButtonKey = Key.Kp_ENTER},
             new KeyboardButtonMapItem(){Function = ButtonFunctions.StartChat, ButtonKey = Key.Return},
-            new KeyboardButtonMapItem(){Function = ButtonFunctions.SendChat, ButtonKey = Key.Return}
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.SendChat, ButtonKey = Key.Return},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Boost, ButtonKey = Key.Shift},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Boost, ButtonKey = Key.LeftShift},
+            new KeyboardButtonMapItem(){Function = ButtonFunctions.Boost, ButtonKey = Key.RightShift}
         };
 
 

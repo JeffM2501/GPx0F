@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Urho;
+using Urho.Audio;
 using Urho.Physics;
 using Urho.Resources;
 
@@ -14,6 +15,13 @@ namespace Client.Game
     {
         protected Camera AttachedCamera = null;
         protected bool UseMouseLook = false;
+
+        protected SoundSource UIBeeper = null;
+
+        public LocalPlayer() : base()
+        {
+            UIBeeper = Node.CreateComponent<SoundSource>();
+        }
 
         public void AttachCamera(Camera cam)
         {

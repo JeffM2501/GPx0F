@@ -127,6 +127,9 @@ namespace Client.Game.Hud
                 StatusText.Value = PlayerObject.PhysicsBody.LinearVelocity.LengthFast.ToString("F0");
                 StatusText2.Value = (PlayerObject.OnGround ? "ground": "falling") + " : " + (PlayerObject.DidMove? "thrusting" : "coasting");
 
+                PowerBar.SetFillFactor(PlayerObject.CurrentPower / PlayerObject.MaxPower);
+                ShieldBar.SetFillFactor(PlayerObject.CurrentShields / PlayerObject.MaxShields);
+
                 ShieldBar.Update(deltaTime);
                 PowerBar.Update(deltaTime);
             }

@@ -47,6 +47,10 @@ namespace Client.Game
                 this.Graphics.SetWindowPosition(new IntVector2(Config.Current.WindowBounds.X, Config.Current.WindowBounds.Y));
 
             Graphics.WindowTitle = ClientResources.WindowTitle;
+
+            Audio.SetMasterGain(SoundType.Master.ToString(), Config.Current.MasterVolume);
+            Audio.SetMasterGain(SoundType.Music.ToString(), Config.Current.MusicVolume);
+            Audio.SetMasterGain(SoundType.Effect.ToString(), Config.Current.EffectsVolume);
         }
 
 
@@ -97,6 +101,20 @@ namespace Client.Game
  
              Renderer.ShadowMapSize = (shadowMapBase) * 1024;
             SetupDebug();
+        }
+
+        public Camera CreateCamera(Scene world)
+        {
+            var cameraNode = world.CreateChild("camera");
+            var cam = cameraNode.CreateComponent<Camera>();
+            var zone = cameraNode.CreateComponent<Zone>();
+            zone.SetBoundingBox(new BoundingBox(cam.Frustum));
+
+            zone.AmbientColor = new Color(0.5f, 0.5f, 0.5f, 1);
+
+            Audio.Listener = cameraNode.CreateComponent<SoundListener>();
+
+            return cam;
         }
 
         public void SetupScene()

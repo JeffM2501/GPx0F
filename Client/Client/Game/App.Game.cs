@@ -27,8 +27,10 @@ namespace Client.Game
         protected void StartGame()
         {
             SetupHud();
-            MainCamera = Geometry.MenuBackground.CreateCamera(World);
-           
+            MainCamera = CreateCamera(World);
+            MainCamera.Node.SetWorldPosition(new Vector3(0, 2, 0));
+
+
             SetMainViewport();
 
             float ArenaSize = 800;
@@ -38,7 +40,7 @@ namespace Client.Game
             MainCamera.FarClip = ArenaSize * 2;
             MainCamera.NearClip = 0.1f;
 
-           Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
+            Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
 
             SetInputMode(true);
             // for now set the state to limboed and wait for a spawn
@@ -127,9 +129,9 @@ namespace Client.Game
 
                 Me = Ship.Node.CreateComponent<LocalPlayer>();
                 Me.Setup("Me");
-                Me.Node.Position = pos;
                 Me.AttachCamera(MainCamera);
                 SetHudPlayer();
+                Me.Spawn(pos, Quaternion.Identity);
                 ThisFrameInput = Me.CurrentInput;
             }
 

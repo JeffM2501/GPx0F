@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Urho;
 using Urho.Physics;
 using Urho.Resources;
+using Urho.Audio;
 
 namespace Client.Game
 {
@@ -17,6 +18,8 @@ namespace Client.Game
         public Ships.ShipNode Ship = null;
 
         public RigidBody PhysicsBody = null;
+        public SoundSource3D SoundOrigin = null;
+        public SoundSource SoundOrigin2D = null;
 
         public bool OnGround = true;
         public bool IsSliding = false;
@@ -31,6 +34,7 @@ namespace Client.Game
         protected float OnGroundTime = 0;
         protected float JumpTime = 0;
 
+        public event EventHandler Spawned = null;
         public event EventHandler Landed = null;
         public event EventHandler Jumped = null;
 
@@ -48,8 +52,52 @@ namespace Client.Game
         protected float MaxSpeedForTilt = 75;
 
         protected float MaxVel = 50;
+        protected float BoostMaxVel = 75;
 
         protected Vector3 DrivingFriction = new Vector3(20, 0 , 10);
+
+
+        // core gameplay stats
+        public float CurrentPower { get; protected set; } = 100;                 // Current Aux Power
+        public float CurrentShields { get; protected set; } = 100;               // Current shield power (health)
+
+        public float MaxPower { get; protected set; } = 100;                     // Max Aux Power
+        public float MaxShields { get; protected set; } = 100;                   // Max shield power (health)
+
+        public float ShieldRechargeRate { get; protected set; } = 10;            // shield points per second after not being damaged for a while
+        public float PowerGenerationRate { get; protected set; } = 5;            // power points per second
+        public float ShieldDamageRechargeDelay { get; protected set; } = 1;      // time after damage before shields recharge
+        public float ShieldRechargePowerDrain { get; protected set; } = 5;       // power per second needed to charge shields
+        public float BoostPowerDrain { get; protected set; } = 15;               // power per second while boosting
+        public float BoostForceMultiplyer { get; protected set; } = 1.5f;        // force multiplier while boosting
+
+        public float ShieldWarningLimit = 25;            // warning generated when shields go below this level
+
+        // frame stats
+        protected float ShieldRechargeStartDelay = 0;       // how much longer to wait until shields can start recharging.
+
+        protected bool Boosting = false;
+        protected bool LastFrameBoost = false;
+
+
+        public event EventHandler StartBoosting = null;
+        public event EventHandler EndBoosting = null;
+
+        public event EventHandler PowerDepleted = null;
+        public event EventHandler PowerRestored = null;
+
+        public event EventHandler ShieldDepleted = null;
+        public event EventHandler ShieldRestored = null;
+        public event EventHandler ShieldRechargeStart = null;
+        public event EventHandler ShieldDamaged = null;
+
+        public event EventHandler StartShieldWarning = null;
+        public event EventHandler EndShieldWarning = null;
+
+        // sound assets
+        Sound SpawnSound = null;
+        Sound JumpSound = null;
+        Sound LandingSound = null;
 
         public class FrameInput : EventArgs
         {
@@ -88,6 +136,18 @@ namespace Client.Game
                     ButtonValues[item] = false;
                 foreach (var item in AxisValues.Keys.ToArray())
                     AxisValues[item] = 0;
+            }
+
+            public void ClearAxes()
+            {
+                foreach (var item in AxisValues.Keys.ToArray())
+                    AxisValues[item] = 0;
+            }
+
+            public void ClearButtons()
+            {
+                foreach (var item in ButtonValues.Keys.ToArray())
+                    ButtonValues[item] = false;
             }
 
             public bool HasLinearInput()
@@ -144,7 +204,7 @@ namespace Client.Game
         public virtual void Setup(string name)
         {
             Name = name;
-   
+
             Ship = Node.GetComponent<Ships.ShipNode>();
             if (Ship == null)
                 return;
@@ -161,25 +221,132 @@ namespace Client.Game
             PhysicsBody.AngularDamping = 1;
             PhysicsBody.LinearDamping = 0.25f;
 
-       //     PhysicsBody.SetAnisotropicFriction(DrivingFriction);
+            //     PhysicsBody.SetAnisotropicFriction(DrivingFriction);
 
             var shape = Node.CreateComponent<CollisionShape>();
             shape.Margin = 0.1f;
-           // shape.SetCapsule(1.5f, 2, Vector3.Zero, Quaternion.Identity);
+            // shape.SetCapsule(1.5f, 2, Vector3.Zero, Quaternion.Identity);
             //shape.SetBox(new Vector3(1, 1.25f, 1), new Vector3(0, -0.25f, 0), Quaternion.Identity);
-            shape.SetSphere(1.5f, new Vector3(0,0.5f,0), Quaternion.Identity);
+            shape.SetSphere(1.5f, new Vector3(0, 0.5f, 0), Quaternion.Identity);
 
             Node.NodeCollision += HandleNodeCollision;
 
             AimX = Node.Rotation.YawAngle;
 
-            SetMaxInputs();
+            SoundOrigin = Node.CreateComponent<SoundSource3D>();
+            SoundOrigin.SetSoundType(SoundType.Effect.ToString());
+            SoundOrigin.NearDistance = 50;
+            SoundOrigin.FarDistance = 500;
 
+            SpawnSound = Ship.Resources.GetSound("Legacy/zone/pop.wav");
+            JumpSound = Ship.Resources.GetSound("Legacy/zone/jump.wav");
+            LandingSound = Ship.Resources.GetSound("Legacy/zone/land.wav");
+
+            SoundOrigin2D = Node.CreateComponent<SoundSource>();
+            SoundOrigin2D.SetSoundType(SoundType.Effect.ToString());
+
+            Jumped += new EventHandler((s, e) => SoundOrigin?.Play(JumpSound));
+            Landed += new EventHandler((s, e) => SoundOrigin?.Play(LandingSound));
+            Spawned += new EventHandler((s, e) => SoundOrigin?.Play(SpawnSound));
+
+            SetMaxInputs();
+        }
+
+        public void TakeDamage(float damage)
+        {
+            bool shieldBelowWarn = CurrentShields <= ShieldWarningLimit;
+
+            CurrentShields -= damage;
+            ShieldDamaged?.Invoke(this, EventArgs.Empty);
+
+            if (!shieldBelowWarn && CurrentShields <= ShieldWarningLimit)
+                StartShieldWarning?.Invoke(this, EventArgs.Empty);
+
+            if (CurrentShields <= 0)
+                ShieldDepleted?.Invoke(this, EventArgs.Empty);
+
+            // start the clock for a recharge
+            ShieldRechargeStartDelay = ShieldDamageRechargeDelay;
         }
 
         protected override void OnUpdate(float timeStep)
         {
             base.OnUpdate(timeStep);
+
+            bool fullPower = CurrentPower >= MaxPower;
+            bool emptyPower = CurrentPower <= 0;
+
+            bool fullShields = CurrentShields >= MaxShields;
+            bool shieldBelowWarn = CurrentShields <= ShieldWarningLimit;
+
+            // add new power this frame
+            CurrentPower += PowerGenerationRate * timeStep;
+
+            LastFrameBoost = Boosting;
+            Boosting = CurrentInput.ButtonValues[Config.ButtonFunctions.Boost];
+            if (Boosting)
+            {
+                float boostPowerNeeded = BoostPowerDrain * timeStep;
+                if (boostPowerNeeded > CurrentPower)
+                    Boosting = false;
+                else
+                    CurrentPower -= boostPowerNeeded;
+            }
+
+            if (CurrentShields < MaxShields)
+            {
+                float powerNeededToCharge = ShieldRechargePowerDrain * timeStep;
+                if (powerNeededToCharge > CurrentPower)
+                {
+                    // we can't charge, so don't
+                    // but go ahead and tick the delay down if it won't go to zero, so that if they have power next frame, they will charge.
+                    if (ShieldRechargeStartDelay > timeStep)
+                        ShieldRechargeStartDelay -= timeStep;
+                }
+                else
+                {
+                    bool charge = true;
+                    if (ShieldRechargeStartDelay > 0)
+                    {
+                        ShieldRechargeStartDelay -= timeStep;
+                        if (ShieldRechargeStartDelay <= 0)
+                            ShieldRechargeStart?.Invoke(this, EventArgs.Empty);
+                        else
+                            charge = false;
+                    }
+
+                    if (charge)
+                    {
+                        ShieldRechargeStartDelay = 0;
+                        CurrentPower -= powerNeededToCharge;
+                        CurrentShields += ShieldRechargeRate * timeStep;
+
+                        if (CurrentShields > MaxShields)
+                            CurrentPower = MaxShields;
+                    }
+                }
+            }
+
+            if (Boosting && !LastFrameBoost)
+                StartBoosting?.Invoke(this, EventArgs.Empty);
+            else if (!Boosting && LastFrameBoost)
+                EndBoosting?.Invoke(this, EventArgs.Empty);
+
+            if (CurrentPower > MaxPower)
+                CurrentPower = MaxPower;
+
+            if (shieldBelowWarn && CurrentShields > ShieldWarningLimit)
+                EndShieldWarning?.Invoke(this, EventArgs.Empty);
+
+            if (!fullShields && CurrentShields >= MaxShields)
+                ShieldRestored?.Invoke(this, EventArgs.Empty);
+
+            if (!fullPower && CurrentPower >= MaxPower)
+                PowerRestored?.Invoke(this, EventArgs.Empty);
+            else if (!emptyPower && CurrentPower <= 0)
+                PowerDepleted?.Invoke(this, EventArgs.Empty);
+
+            CurrentInput.ClearButtons();
         }
 
         bool LastOnGround = false;
@@ -320,7 +487,7 @@ namespace Client.Game
 
             LastOnGround = OnGround;
             ResetWorldCollision();
-            CurrentInput.Clear();
+            CurrentInput.ClearAxes();
         }
 
         private void HandleNodeCollision(NodeCollisionEventArgs eventData)
@@ -380,6 +547,14 @@ namespace Client.Game
                 OnGround = true;
                 IsSliding = false;
             }
+        }
+
+        public void Spawn(Vector3 postion, Quaternion orientation)
+        {
+            Node.SetWorldPosition(postion);
+            Node.SetWorldRotation(orientation);
+
+            Spawned?.Invoke(this, EventArgs.Empty);
         }
     }
 }

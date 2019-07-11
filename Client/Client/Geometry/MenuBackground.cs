@@ -54,16 +54,6 @@ namespace Client.Geometry
             MenuShip.Node.RunActionsAsync(new RotateAroundBy(60, Vector3.Zero, 0, 720, 0, TransformSpace.Local)).ContinueWith((x) => KeepSpinning());
 
         }
-        public static Camera CreateCamera(Scene world)
-        {
-            var cameraNode = world.CreateChild("camera");
-            var cam = cameraNode.CreateComponent<Camera>();
-            cam.Node.Position = new Vector3(0, 1, -5);
-            var zone = cameraNode.CreateComponent<Zone>();
-            zone.SetBoundingBox(new BoundingBox(cam.Frustum));
-            zone.AmbientColor = new Color(0.5f, 0.5f, 0.5f, 1);
-
-            return cam;
-        }
+       
     }
 }
