@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Urho;
-using Urho.Physics;
+using Urho.Audio;
 using Urho.Resources;
 
 namespace Client
@@ -35,6 +35,13 @@ namespace Client
             public float SkidTilt = 0;
 
             public ResourceCache Resources = null;
+
+            // sound assets
+            public Sound SpawnSound = null;
+            public Sound JumpSound = null;
+            public Sound LandingSound = null;
+
+            public Sound BoostSound = null;
 
             public ShipNode() : base()
             {
@@ -66,6 +73,13 @@ namespace Client
             node.ModelNode.CastShadows = true;
             node.ModelNode.Material = resources.GetMaterial(path +"/Materials/BaseMaterial.xml").Clone();
             node.ModelNode.Material.SetTexture(0, resources.GetTexture2D(path + "/Textures/" + team.ToString().ToLower() + ".png"));
+
+
+            node.SpawnSound = resources.GetSound("Legacy/zone/pop.wav");
+            node.JumpSound = resources.GetSound("Legacy/zone/jump.wav");
+            node.LandingSound = resources.GetSound("Legacy/zone/land.wav");
+            node.BoostSound = resources.GetSound("Sounds/347576__djt4nn3r__thrusters-loop.wav");
+            node.BoostSound.Looped = true;
 
             return node;
         }

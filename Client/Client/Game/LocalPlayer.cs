@@ -20,7 +20,7 @@ namespace Client.Game
 
         public LocalPlayer() : base()
         {
-            UIBeeper = Node.CreateComponent<SoundSource>();
+            
         }
 
         public void AttachCamera(Camera cam)
@@ -29,6 +29,8 @@ namespace Client.Game
             Node.AddChild(cam.Node);
            // cam.Node.Rotation = Quaternion.FromAxisAngle(Vector3.UnitY, 90);
             cam.Node.Position = new Vector3(0, 1.5f, 0);
+
+            UIBeeper = Node.CreateComponent<SoundSource>();
         }
 
         protected override void OnUpdate(float timeStep)

@@ -18,8 +18,10 @@ namespace Client.Game
         public Ships.ShipNode Ship = null;
 
         public RigidBody PhysicsBody = null;
-        public SoundSource3D SoundOrigin = null;
-        public SoundSource SoundOrigin2D = null;
+        public SoundSource3D ContactSoundOrigin = null;
+        public SoundSource3D EngineSoundOrigin = null;
+        protected float MaxBoostGain = 1;
+        protected float BoostGainRate = 4;
 
         public bool OnGround = true;
         public bool IsSliding = false;
@@ -93,11 +95,6 @@ namespace Client.Game
 
         public event EventHandler StartShieldWarning = null;
         public event EventHandler EndShieldWarning = null;
-
-        // sound assets
-        Sound SpawnSound = null;
-        Sound JumpSound = null;
-        Sound LandingSound = null;
 
         public class FrameInput : EventArgs
         {
@@ -233,21 +230,22 @@ namespace Client.Game
 
             AimX = Node.Rotation.YawAngle;
 
-            SoundOrigin = Node.CreateComponent<SoundSource3D>();
-            SoundOrigin.SetSoundType(SoundType.Effect.ToString());
-            SoundOrigin.NearDistance = 50;
-            SoundOrigin.FarDistance = 500;
+            ContactSoundOrigin = Node.CreateComponent<SoundSource3D>();
+            ContactSoundOrigin.SetSoundType(SoundType.Effect.ToString());
+            ContactSoundOrigin.NearDistance = 50;
+            ContactSoundOrigin.FarDistance = 500;
 
-            SpawnSound = Ship.Resources.GetSound("Legacy/zone/pop.wav");
-            JumpSound = Ship.Resources.GetSound("Legacy/zone/jump.wav");
-            LandingSound = Ship.Resources.GetSound("Legacy/zone/land.wav");
+            EngineSoundOrigin = Node.CreateComponent<SoundSource3D>();
+            EngineSoundOrigin.SetSoundType(SoundType.Effect.ToString());
+            EngineSoundOrigin.NearDistance = 50;
+            EngineSoundOrigin.FarDistance = 500;
 
-            SoundOrigin2D = Node.CreateComponent<SoundSource>();
-            SoundOrigin2D.SetSoundType(SoundType.Effect.ToString());
+            Jumped += new EventHandler((s, e) => ContactSoundOrigin?.Play(Ship.JumpSound));
+            Landed += new EventHandler((s, e) => ContactSoundOrigin?.Play(Ship.LandingSound));
+            Spawned += new EventHandler((s, e) => ContactSoundOrigin?.Play(Ship.SpawnSound));
 
-            Jumped += new EventHandler((s, e) => SoundOrigin?.Play(JumpSound));
-            Landed += new EventHandler((s, e) => SoundOrigin?.Play(LandingSound));
-            Spawned += new EventHandler((s, e) => SoundOrigin?.Play(SpawnSound));
+            StartBoosting += new EventHandler((s, e) => { EngineSoundOrigin.Gain = 0;  EngineSoundOrigin?.Play(Ship.BoostSound); });
+            EndBoosting += new EventHandler((s, e) => EngineSoundOrigin?.Stop());
 
             SetMaxInputs();
         }
@@ -347,6 +345,13 @@ namespace Client.Game
                 PowerDepleted?.Invoke(this, EventArgs.Empty);
 
             CurrentInput.ClearButtons();
+
+            if (Boosting && EngineSoundOrigin.Playing && EngineSoundOrigin.Gain < MaxBoostGain)
+            {
+                EngineSoundOrigin.Gain += BoostGainRate * timeStep;
+                if (EngineSoundOrigin.Gain > MaxBoostGain)
+                    EngineSoundOrigin.Gain = MaxBoostGain;
+            }
         }
 
         bool LastOnGround = false;
@@ -368,6 +373,14 @@ namespace Client.Game
 
             // Vertical aiming
             AimY += CurrentInput.AxisValues[Config.AxisFunctions.Aiming];
+
+            float effectiveMoveFactor = 1;
+            float effecitveMaxSpeed = MaxVel;
+            if (Boosting)
+            {
+                effectiveMoveFactor = BoostForceMultiplyer;
+                effecitveMaxSpeed = BoostMaxVel;
+            }
 
             Quaternion q = Quaternion.FromAxisAngle(Vector3.UnitY, AimX );
             PhysicsBody.SetRotation(q);
@@ -411,7 +424,7 @@ namespace Client.Game
                     float forwardFactor = CurrentInput.AxisValues[Config.AxisFunctions.Acceleration] / CurrentInput.GetMaxVal(Config.AxisFunctions.Acceleration);
                     
                     if (forwardFactor > 0)
-                        forwardFactor *= ForwardMoveForce;
+                        forwardFactor *= ForwardMoveForce * effectiveMoveFactor;
                     else
                         forwardFactor *= BackwardsMoveForce;
 
@@ -419,7 +432,7 @@ namespace Client.Game
 
                     force += q * new Vector3(sideFactor, 0, forwardFactor);
 
-                    if (PhysicsBody.LinearVelocity.LengthFast < MaxVel)
+                    if (PhysicsBody.LinearVelocity.LengthFast < effecitveMaxSpeed)
                         PhysicsBody.ApplyImpulse(force);
                 }
 
@@ -455,8 +468,8 @@ namespace Client.Game
 
                         force += q * new Vector3(sideFactor, 0, forwardFactor);
                         force.Normalize();
-                        force *= AirMoveForce;
-                        if (PhysicsBody.LinearVelocity.LengthFast < MaxVel)
+                        force *= AirMoveForce * effectiveMoveFactor;
+                        if (PhysicsBody.LinearVelocity.LengthFast < effecitveMaxSpeed)
                             PhysicsBody.ApplyImpulse(force);
                     }
                 }

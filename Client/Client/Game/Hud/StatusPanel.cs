@@ -22,6 +22,8 @@ namespace Client.Game.Hud
 
         protected Sprite WeaponIcon = null;
 
+        protected Sprite BoostIcon = null;
+
         public void Setup(Player linkedPlayer, ResourceCache res)
         {
             ImageRect = new IntRect(48, 0, 64, 16);
@@ -118,6 +120,31 @@ namespace Client.Game.Hud
             StatusText2.SetFont(TextFont, 12);
             StatusText2.Value = string.Empty;
 
+
+            BoostIcon =  new Sprite();
+            AddChild(BoostIcon);
+            BoostIcon.SetAlignment(HorizontalAlignment.Left, VerticalAlignment.Top);
+            BoostIcon.SetSize(Height / 2, Height / 2);
+            BoostIcon.SetColor(DarkYellow);
+            BoostIcon.Position = new IntVector2(-Height / 2, 0);
+            BoostIcon.SetHotSpot(0, 0);
+            BoostIcon.Texture = res.GetTexture2D("UI/GameIcons.Net/rocket-thruster_solid.png");
+
+            BoostIcon.Visible = false;
+
+            linkedPlayer.StartBoosting += LinkedPlayer_StartBoosting;
+            linkedPlayer.EndBoosting += LinkedPlayer_EndBoosting;
+
+        }
+
+        private void LinkedPlayer_EndBoosting(object sender, EventArgs e)
+        {
+            BoostIcon.Visible = false;
+        }
+
+        private void LinkedPlayer_StartBoosting(object sender, EventArgs e)
+        {
+            BoostIcon.Visible = true;
         }
 
         public void DoUpdate(float deltaTime, float elapsedTime)
