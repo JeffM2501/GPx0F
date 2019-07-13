@@ -9,9 +9,11 @@ using Urho.Audio;
 using Urho.Physics;
 using Urho.Resources;
 
+using Game;
+
 namespace Client.Game
 {
-    public class LocalPlayer : Player
+    public class LocalPlayer : ClientPlayer
     {
         protected Camera AttachedCamera = null;
         protected bool UseMouseLook = false;

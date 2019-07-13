@@ -184,4 +184,19 @@
   <data name="ControlSettingsName" xml:space="preserve">
     <value>Controls</value>
   </data>
+  <data name="SpawnHudMesage" xml:space="preserve">
+    <value>Spawned at </value>
+  </data>
+  <data name="BasicTutorialDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BasicTutorialName" xml:space="preserve">
+    <value>Basic Tutorial</value>
+  </data>
+  <data name="DebugTutorialDescription" xml:space="preserve">
+    <value>Used by developers to debug client code. Allows the client to run without a server connection.</value>
+  </data>
+  <data name="DebugTutorialName" xml:space="preserve">
+    <value>Debug Tutorial</value>
+  </data>
 </root>

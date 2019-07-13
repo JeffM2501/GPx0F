@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 using Urho;
 using Urho.Resources;
@@ -11,6 +9,8 @@ using Urho.Actions;
 using Urho.Audio;
 using Urho.Physics;
 
+using Game.Maps;
+
 namespace Client.Game
 {
     public partial class App : Application
@@ -18,7 +18,7 @@ namespace Client.Game
         protected Scene World = null;
         protected Camera MainCamera = null;
 
-        protected Arena CurrentArena = null;
+        internal Arena CurrentArena = null;
 
         public App(ApplicationOptions options = null) : base(options) { }
 
@@ -36,6 +36,8 @@ namespace Client.Game
 
             SetupRenderer();
 
+            Tutorials.TutorialAPI.LoadTutorialsFromFile(Assembly.GetExecutingAssembly());
+
             Menus.Stack.Setup(this);
             World = new Scene();
             SetupScene();
@@ -52,8 +54,6 @@ namespace Client.Game
             Audio.SetMasterGain(SoundType.Music.ToString(), Config.Current.MusicVolume);
             Audio.SetMasterGain(SoundType.Effect.ToString(), Config.Current.EffectsVolume);
         }
-
-
 
         protected override void Stop()
         {

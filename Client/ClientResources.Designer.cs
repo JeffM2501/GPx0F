@@ -97,6 +97,24 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string BasicTutorialDescription {
+            get {
+                return ResourceManager.GetString("BasicTutorialDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Basic Tutorial.
+        /// </summary>
+        internal static string BasicTutorialName {
+            get {
+                return ResourceManager.GetString("BasicTutorialName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controls.
         /// </summary>
         internal static string ControlSettingsName {
@@ -139,6 +157,24 @@ namespace Client {
         internal static string CreditText {
             get {
                 return ResourceManager.GetString("CreditText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used by developers to debug client code. Allows the client to run without a server connection..
+        /// </summary>
+        internal static string DebugTutorialDescription {
+            get {
+                return ResourceManager.GetString("DebugTutorialDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debug Tutorial.
+        /// </summary>
+        internal static string DebugTutorialName {
+            get {
+                return ResourceManager.GetString("DebugTutorialName", resourceCulture);
             }
         }
         
@@ -229,6 +265,15 @@ namespace Client {
         internal static string SettingsTitle {
             get {
                 return ResourceManager.GetString("SettingsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spawned at .
+        /// </summary>
+        internal static string SpawnHudMesage {
+            get {
+                return ResourceManager.GetString("SpawnHudMesage", resourceCulture);
             }
         }
         

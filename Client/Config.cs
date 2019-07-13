@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using Urho;
+using Game;
 
 namespace Client
 {
@@ -63,33 +64,6 @@ namespace Client
 
         // input
 
-        public enum AxisFunctions
-        {
-            None,
-            Turning,
-            Acceleration,
-            Aiming,
-            SideSlide,
-        }
-
-        public enum ButtonFunctions
-        {
-            None,
-            Jump,
-            PrimaryFire,
-            SecondaryFire,
-            Drop,
-            Accessory,
-            Spawn,
-            StartChat,
-            SendChat,
-            Menu,
-            MenuBack,
-            MenuAccept,
-            Boost,
-            ToggleReverseThrottle,
-            HoldReverseThrottle,
-        }
 
         public AxisFunctions MouseXAxisFunciton = AxisFunctions.Turning;
         public AxisFunctions MouseYAxisFunciton = AxisFunctions.Aiming;

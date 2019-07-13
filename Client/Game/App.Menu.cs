@@ -34,14 +34,14 @@ namespace Client.Game
             MainCamera.Node.SetWorldPosition(new Vector3(0, 1, -5));
             SetMainViewport();
 
-            CurrentArena = new Geometry.MenuBackground();
+            CurrentArena = new Menus.Geometry.MenuBackground();
             CurrentArena.Setup(ResourceCache, World, 200);
 
             Menus.Stack.ClearAll();
 
             var main = new Menus.Main();
-            main.StartGame += Main_StartGame;
-            main.Quit += Main_Quit;
+            Menus.Main.StartGame += Main_StartGame;
+            Menus.Main.Quit += Main_Quit;
             Menus.Stack.Push(main);
 
             var music = ResourceCache.GetSound("Sounds/Ambient/425368__soundholder__ambient-meadow-near-forest-single-bird-and-eurasian-cranes-in-background-stereo-xy-mk012_01.ogg");

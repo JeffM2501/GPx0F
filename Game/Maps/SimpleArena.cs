@@ -8,17 +8,17 @@ using Urho;
 using Urho.Resources;
 using Urho.Physics;
 
-using Client.Game;
+using Game;
 
-namespace Client.Geometry
-{
-    public class SimpleArena : Game.Arena
+namespace Game.Maps
+{ 
+    public class SimpleArena : Arena
     {
         public Light MainLight = null;
         public Node Ground = null;
 
-        protected float GroundRepeat = 0.75f;
-        protected float WallRepeat = 0.125f;
+        public float GroundRepeat = 0.75f;
+        public float WallRepeat = 0.125f;
 
         public override bool Setup(ResourceCache resources, Scene world, float size)
         {
@@ -37,8 +37,6 @@ namespace Client.Geometry
 
             Ground = MakePlaneGround(size, "Materials/Ground.xml", GroundRepeat);
             MakeBorders(size - border, wallHeight, "Legacy/zone/Materials/OuterWall.xml", WallRepeat);
-
-            var node = MakeBox("TestBox", new Vector3(10, 2.5f, 10), new Vector3(5, 5, 5), "Legacy/zone/Materials/BoxWall.xml", new Vector2(5 * WallRepeat, 5 * WallRepeat));
 
             var lightNode = world.CreateChild("DirectionalLight");
             lightNode.SetDirection(new Vector3(5, -5, -5f)); // The direction vector does not need to be normalized

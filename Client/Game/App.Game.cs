@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using Urho;
 using Urho.Physics;
 
+using Game;
+using Game.Maps;
+
 namespace Client.Game
 {
     public partial class App
     {
-        protected enum GameStates
+        public enum GameStates
         {
             Inactive,
             Connecting,
@@ -19,10 +22,12 @@ namespace Client.Game
             Limboed,
             Playing,
         }
-        protected GameStates GameState = GameStates.Inactive;
+        public GameStates GameState = GameStates.Inactive;
 
-        protected List<Player> Players = new List<Player>();
-        protected LocalPlayer Me = null;
+        internal List<ClientPlayer> Players = new List<ClientPlayer>();
+        internal LocalPlayer Me = null;
+
+        public event EventHandler RequestSpawn = null;
 
         protected void StartGame()
         {
@@ -30,15 +35,31 @@ namespace Client.Game
             MainCamera = CreateCamera(World);
             MainCamera.Node.SetWorldPosition(new Vector3(0, 2, 0));
 
-
             SetMainViewport();
-
             float ArenaSize = 800;
-            CurrentArena = new Geometry.SimpleArena();
-            CurrentArena.Setup(ResourceCache, World, ArenaSize);
 
+            if (Tutorials.TutorialAPI.CurrentTutorial != null)
+            {
+                Tutorials.TutorialAPI.GameApp = this;
+
+                ArenaSize = Tutorials.TutorialAPI.CurrentTutorial.ArenaSize;
+                if (Tutorials.TutorialAPI.CurrentTutorial.UseSimpleArena)
+                    CurrentArena = new SimpleArena();
+                else
+                    CurrentArena = new Arena();
+            }
+            else
+            {
+                CurrentArena = new SimpleArena();
+            }
+
+            CurrentArena.Setup(ResourceCache, World, ArenaSize);
             MainCamera.FarClip = ArenaSize * 2;
             MainCamera.NearClip = 0.1f;
+
+            Tutorials.TutorialAPI.GameApp = this;
+            Tutorials.TutorialAPI.CurrentArena = CurrentArena;
+            Tutorials.TutorialAPI.CurrentTutorial?.Startup();
 
             Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
 
@@ -49,6 +70,8 @@ namespace Client.Game
 
         protected void StopGame()
         {
+            Tutorials.TutorialAPI.StopTutorial();
+
             if (World != null)
             {
                 World.Clear();
@@ -94,10 +117,11 @@ namespace Client.Game
             }
         }
 
-
         private void HandleGameplay(float deltaTime)
         {
-            if (ThisFrameInput.ButtonValues[Config.ButtonFunctions.Menu])
+            Tutorials.TutorialAPI.UpdateTutorial(deltaTime);
+
+            if (ThisFrameInput.ButtonValues[ButtonFunctions.Menu])
             {
                 SetInputMode(false);
                 // show in game menu
@@ -105,23 +129,27 @@ namespace Client.Game
 
             if (GameState == GameStates.Limboed)
             {
-                if (ThisFrameInput.ButtonValues[Config.ButtonFunctions.Spawn])
+                if (ThisFrameInput.ButtonValues[ButtonFunctions.Spawn])
                 {
                     SetHudMessage(string.Empty);
-                    SpawnPlayer();
+                    RequestSpawn?.Invoke(this, EventArgs.Empty);
                 }
             }
 
             if (GameState == GameStates.Playing)
             {
+               
             }
         }
 
         public void SpawnPlayer()
         {
-            GameState = GameStates.Playing;
+            SpawnPlayer(CurrentArena.GetSpawn(), Quaternion.Identity);
+        }
 
-            Vector3 pos = CurrentArena.GetSpawn();
+        public void SpawnPlayer(Vector3 pos, Quaternion orient)
+        {
+            GameState = GameStates.Playing;
 
             if (Me == null)
             {
@@ -131,11 +159,11 @@ namespace Client.Game
                 Me.Setup("Me");
                 Me.AttachCamera(MainCamera);
                 SetHudPlayer();
-                Me.Spawn(pos, Quaternion.Identity);
+                Me.Spawn(pos, orient);
                 ThisFrameInput = Me.CurrentInput;
             }
 
-            Hud.ChatPanel.AddChatText("Spawned at " + pos.ToString(), Hud.ChatPanel.SystemSource);
+            Hud.ChatPanel.AddChatText(ClientResources.SpawnHudMesage + pos.ToString(), Hud.ChatPanel.SystemSource);
         }
     }
 }

@@ -8,7 +8,7 @@ using Urho;
 using Urho.Physics;
 using Urho.Resources;
 
-namespace Client.Game
+namespace Game.Maps
 {
     public class Arena
     {
@@ -31,7 +31,7 @@ namespace Client.Game
             return new Vector3(0, 2, 0);
         }
 
-        protected void AddStaticPhysics(Node node)
+        public void AddStaticPhysics(Node node)
         {
             var phys = node.CreateComponent<RigidBody>();
             phys.Kinematic = true;
@@ -42,7 +42,7 @@ namespace Client.Game
             phys.Mass = 100000000;
         }
 
-        protected Node SetCollidable(Node node, Vector3 size, Vector3 origin, Quaternion rot)
+        public Node SetCollidable(Node node, Vector3 size, Vector3 origin, Quaternion rot)
         {
             AddStaticPhysics(node);
 
@@ -52,7 +52,7 @@ namespace Client.Game
             return node;
         }
 
-        protected Node SetCollidable(Node node)
+        public Node SetCollidable(Node node)
         {
             var sm = node.GetComponent<StaticModel>();
             AddStaticPhysics(node);
@@ -63,7 +63,7 @@ namespace Client.Game
             return node;
         }
 
-        protected Node MakeBox(string name, Vector3 pos, Vector3 scale, string materialName, Vector2 uvRepeat)
+        public Node MakeBox(string name, Vector3 pos, Vector3 scale, string materialName, Vector2 uvRepeat)
         {
             var node = World.CreateChild(name);
             node.Position = pos;
@@ -79,7 +79,7 @@ namespace Client.Game
             return node;
         }
 
-        protected void MakeBorders (float size, float wallHeight, string materialName, float uvRepeat)
+        public void MakeBorders (float size, float wallHeight, string materialName, float uvRepeat)
         {
             Vector3 box = new Vector3(wallHeight, wallHeight, wallHeight);
 
@@ -97,7 +97,7 @@ namespace Client.Game
 
         }
 
-        protected Node MakePlaneGround( float size, string material, float repeat)
+        public Node MakePlaneGround( float size, string material, float repeat)
         {
             Node ground = World.CreateChild("ground");
             ground.Position = new Vector3(0.0f, 0.0f, 0.0f);

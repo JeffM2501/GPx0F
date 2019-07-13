@@ -8,7 +8,7 @@ using Urho;
 using Urho.Audio;
 using Urho.Resources;
 
-namespace Client
+namespace Game
 {
     public static class Ships
     {

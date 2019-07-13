@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Game;
+
 namespace Client.Game
 {
     public partial class App
@@ -24,12 +26,12 @@ namespace Client.Game
 
         
 
-        public Player.FrameInput ThisFrameInput = new Player.FrameInput();
+        public FrameInput ThisFrameInput = new FrameInput();
 
 
-        private bool IsAngleFunction(Config.AxisFunctions func)
+        private bool IsAngleFunction(AxisFunctions func)
         {
-            return func == Config.AxisFunctions.Aiming || func == Config.AxisFunctions.Turning;
+            return func == AxisFunctions.Aiming || func == AxisFunctions.Turning;
         }
 
         private static bool useMouse = true;
@@ -50,16 +52,16 @@ namespace Client.Game
 
                 if (useMouse)
                 {
-                    if (Config.Current.MouseXAxisFunciton != Config.AxisFunctions.None)
+                    if (Config.Current.MouseXAxisFunciton != AxisFunctions.None)
                         ThisFrameInput.AxisValues[Config.Current.MouseXAxisFunciton] = mouseXValue;
-                    if (Config.Current.MouseYAxisFunciton != Config.AxisFunctions.None)
+                    if (Config.Current.MouseYAxisFunciton != AxisFunctions.None)
                         ThisFrameInput.AxisValues[Config.Current.MouseYAxisFunciton] = mouseYValue;
-                    if (Config.Current.MouseZAxisFunciton != Config.AxisFunctions.None)
+                    if (Config.Current.MouseZAxisFunciton != AxisFunctions.None)
                         ThisFrameInput.AxisValues[Config.Current.MouseZAxisFunciton] = mouseZValue;
 
                     // validate that everything is within input ranges
 
-                    foreach (Config.AxisFunctions func in Enum.GetValues(typeof(Config.AxisFunctions)))
+                    foreach (AxisFunctions func in Enum.GetValues(typeof(AxisFunctions)))
                     {
                         if (Math.Abs(ThisFrameInput.AxisValues[func]) > (ThisFrameInput.GetMaxVal(func) * deltaT))
                             ThisFrameInput.AxisValues[func] = ThisFrameInput.GetMaxVal(func) * Math.Sign(ThisFrameInput.AxisValues[func]) * deltaT;

@@ -12,7 +12,7 @@ namespace Client.Game.Hud
 {
     public class StatusPanel : BorderImage
     {
-        public Player PlayerObject = null;
+        public ClientPlayer PlayerObject = null;
 
         private Text StatusText = null;
         private Text StatusText2 = null;
@@ -24,7 +24,7 @@ namespace Client.Game.Hud
 
         protected Sprite BoostIcon = null;
 
-        public void Setup(Player linkedPlayer, ResourceCache res)
+        public void Setup(ClientPlayer linkedPlayer, ResourceCache res)
         {
             ImageRect = new IntRect(48, 0, 64, 16);
             Border = new IntRect(4, 4, 4, 4);
