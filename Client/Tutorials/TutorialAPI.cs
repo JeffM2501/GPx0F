@@ -39,6 +39,8 @@ namespace Client.Tutorials
 
             bool Enabled { get; }
 
+            int SortOrder { get; }
+
             void Init(string langauge);
 
             void Startup();
@@ -84,6 +86,28 @@ namespace Client.Tutorials
                 }
                 catch (Exception)
                 {
+                }
+            }
+        }
+
+        internal static void SortTutorials()
+        {
+            Dictionary<int, List<ITutorial>> sortedTuts = new Dictionary<int, List<ITutorial>>();
+
+            foreach (var tut in AvalilbleTutorials.Values)
+            {
+                if (!sortedTuts.ContainsKey(tut.SortOrder))
+                    sortedTuts.Add(tut.SortOrder, new List<ITutorial>());
+
+                sortedTuts[tut.SortOrder].Add(tut);
+            }
+
+            AvalilbleTutorials.Clear();
+            foreach (var tutList in sortedTuts)
+            {
+                foreach (var tut in tutList.Value)
+                {
+                    AvalilbleTutorials.Add(tut.DisplayName, tut);
                 }
             }
         }

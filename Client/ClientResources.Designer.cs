@@ -97,7 +97,7 @@ namespace Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to A basic tutorial that covers game basics.
         /// </summary>
         internal static string BasicTutorialDescription {
             get {
@@ -161,7 +161,8 @@ namespace Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used by developers to debug client code. Allows the client to run without a server connection..
+        ///   Looks up a localized string similar to Used by developers to debug client code. 
+        ///Allows the client to run without a server connection..
         /// </summary>
         internal static string DebugTutorialDescription {
             get {
@@ -283,6 +284,15 @@ namespace Client {
         internal static string SpawnMessage {
             get {
                 return ResourceManager.GetString("SpawnMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        internal static string Start {
+            get {
+                return ResourceManager.GetString("Start", resourceCulture);
             }
         }
         

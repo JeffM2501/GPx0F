@@ -19,9 +19,10 @@ namespace Client.Tutorials
 
         public int ArenaSize => 400;
 
+        public int SortOrder => 0;
+
 #if DEBUG
         public bool Enabled => true;
-
 #else
         public bool Enabled => false;
 #endif
