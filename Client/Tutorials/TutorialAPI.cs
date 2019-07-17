@@ -18,6 +18,18 @@ namespace Client.Tutorials
         public static Arena CurrentArena { get; internal set; } = null;
         public static LocalPlayer UserPlayer { get; internal set; } = null;
 
+        public static void AddTextMessage(string messageText)
+        {
+            GameApp.SetHudMessage(messageText);
+            if ( !string.IsNullOrEmpty(messageText))
+            {
+                var lines = messageText.Split("\n".ToCharArray());
+                Array.Reverse(lines);
+                foreach (var line in lines)
+                    Game.Hud.ChatPanel.AddChatText(line, Game.Hud.ChatPanel.TutorialSource);
+            }  
+        }
+
         public static void SpawnTutorialPlayer(Vector3 position, Quaternion orintation)
         {
             if (UserPlayer == null)
@@ -77,22 +89,35 @@ namespace Client.Tutorials
         }
         internal static void LoadTutorialDir(string path)
         {
-            DirectoryInfo dir = new DirectoryInfo(path);
-            foreach (var file in dir.GetFiles("*.dll"))
+            if (Directory.Exists(path))
             {
-                try
+                DirectoryInfo dir = new DirectoryInfo(path);
+                foreach (var file in dir.GetFiles("*.dll"))
                 {
-                    LoadTutorialsFromFile(Assembly.LoadFrom(file.FullName));
-                }
-                catch (Exception)
-                {
+                    try
+                    {
+                        LoadTutorialsFromFile(Assembly.LoadFrom(file.FullName));
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
         }
 
+        internal static void LoadTutorials()
+        {
+            Assembly thisAss = Assembly.GetExecutingAssembly();
+            Tutorials.TutorialAPI.LoadTutorialsFromFile(thisAss);
+
+            LoadTutorialDir(Path.Combine(Path.GetDirectoryName(thisAss.Location),"Tutorials"));
+
+            SortTutorials();
+        }
+
         internal static void SortTutorials()
         {
-            Dictionary<int, List<ITutorial>> sortedTuts = new Dictionary<int, List<ITutorial>>();
+            SortedDictionary<int, List<ITutorial>> sortedTuts = new SortedDictionary<int, List<ITutorial>>();
 
             foreach (var tut in AvalilbleTutorials.Values)
             {

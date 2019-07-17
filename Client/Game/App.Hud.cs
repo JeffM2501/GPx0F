@@ -84,10 +84,10 @@ namespace Client.Game
 
             HudCenterMessage = new Text();
             HudRoot.AddChild(HudCenterMessage);
-            HudCenterMessage.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
-            HudCenterMessage.SetPosition(0, 0);
+            HudCenterMessage.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Top);
+            HudCenterMessage.SetPosition(0, 100);
             HudCenterMessage.SetFont(font, 36);
-            HudCenterMessage.SetColor(Color.White);
+            HudCenterMessage.SetColor(Color.FromHex("0F0F0F"));
             HudCenterMessage.Value = string.Empty;
             HudCenterMessage.Visible = false;
 

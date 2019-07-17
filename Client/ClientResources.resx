@@ -203,4 +203,7 @@ Allows the client to run without a server connection.</value>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="TutorialSourceName" xml:space="preserve">
+    <value>Tutor</value>
+  </data>
 </root>

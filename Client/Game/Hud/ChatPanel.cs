@@ -29,6 +29,7 @@ namespace Client.Game.Hud
         public static readonly int LogSource = -2;
         public static readonly int ConnectionSource = -3;
         public static readonly int SystemSource = -1;
+        public static readonly int TutorialSource = -4;
 
         private static event EventHandler<LogLine> DoLogAdd;
 
@@ -91,7 +92,7 @@ namespace Client.Game.Hud
             SetSourceInfo(LogSource, ClientResources.LogSourceName, Color.FromHex("ff6738"));
             SetSourceInfo(SystemSource, ClientResources.SystemSourceName, Color.FromHex("6dcff6"));
             SetSourceInfo(ConnectionSource, ClientResources.NetworkSourceName, Color.FromHex("197b30"));
-
+            SetSourceInfo(TutorialSource, ClientResources.TutorialSourceName, Color.FromHex("04CB68"));
 
             ComputeTextLines();
             LoadTextLines();

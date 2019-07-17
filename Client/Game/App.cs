@@ -36,7 +36,7 @@ namespace Client.Game
 
             SetupRenderer();
 
-            Tutorials.TutorialAPI.LoadTutorialsFromFile(Assembly.GetExecutingAssembly());
+            Tutorials.TutorialAPI.LoadTutorials();
 
             Menus.Stack.Setup(this);
             World = new Scene();

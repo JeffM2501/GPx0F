@@ -65,7 +65,8 @@ namespace Client.Game
 
             SetInputMode(true);
             // for now set the state to limboed and wait for a spawn
-            SetLimboed();
+            if (Me == null)
+                SetLimboed();
         }
 
         protected void StopGame()

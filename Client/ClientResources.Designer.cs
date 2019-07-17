@@ -315,6 +315,15 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tutor.
+        /// </summary>
+        internal static string TutorialSourceName {
+            get {
+                return ResourceManager.GetString("TutorialSourceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to GPx0F.
         /// </summary>
         internal static string WindowTitle {

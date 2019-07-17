@@ -61,6 +61,13 @@ namespace Client.Menus
 
         public static void NewGame_Pressed(PressedEventArgs obj)
         {
+            // quick start
+#if DEBUG
+            if (Tutorials.TutorialAPI.CurrentTutorial == null)
+                Tutorials.TutorialAPI.StartTutorial(Tutorials.TutorialAPI.AvalilbleTutorials.Values.ToArray()[0].DisplayName);
+#else
+            // find network game, or start basic tutorial
+#endif
             StartGame?.Invoke(null, EventArgs.Empty);
         }
 

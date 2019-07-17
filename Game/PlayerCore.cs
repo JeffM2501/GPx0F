@@ -97,9 +97,11 @@ namespace Game
         public PlayerCore() : base()
         {
             ReceiveSceneUpdates = true;
+
+            CurrentInput.SetMaxAxisVal(AxisFunctions.Turning, 720);
+            CurrentInput.SetMaxAxisVal(AxisFunctions.Aiming, 180);
+
         }
-
-
 
         protected void CallSpawned ()
         {
