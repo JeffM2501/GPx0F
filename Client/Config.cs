@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Xml;
+using System.Security.Cryptography;
 using System.Xml.Serialization;
 
 using Urho;
@@ -38,6 +38,35 @@ namespace Client
         public string AssetFolder = string.Empty;
 
 
+        // user info
+        public string AccountName = string.Empty;
+        public string AccountCredentials = string.Empty;
+        public bool SaveAccountCredentials = true;
+        public bool Registered = false;
+
+        private string TempCredentials = string.Empty;
+        public string GetCredentials()
+        {
+            if (AccountCredentials == string.Empty || !SaveAccountCredentials)
+                return TempCredentials;
+
+            TempCredentials = System.Text.Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(AccountCredentials), new byte[] { 102, 31, 87, 98, 0, 2, 4 }, DataProtectionScope.CurrentUser));
+            return TempCredentials;
+        }
+
+        public void SetCredentials(string credentials)
+        {
+            TempCredentials = credentials;
+            if (!SaveAccountCredentials)
+            {
+                AccountCredentials = string.Empty;
+                return;
+            }
+
+            AccountCredentials = Convert.ToBase64String(ProtectedData.Protect(System.Text.Encoding.UTF8.GetBytes(credentials), new byte[] { 102, 31, 87, 98, 0, 2, 4 }, DataProtectionScope.CurrentUser));
+        }
+
+
         // rendering
         public int Multisample = 16;
         public bool LimitFPS = false;
@@ -63,8 +92,6 @@ namespace Client
 
 
         // input
-
-
         public AxisFunctions MouseXAxisFunciton = AxisFunctions.Turning;
         public AxisFunctions MouseYAxisFunciton = AxisFunctions.Aiming;
         public AxisFunctions MouseZAxisFunciton = AxisFunctions.None;

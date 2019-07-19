@@ -32,7 +32,7 @@ namespace Client.Game
         protected void StartGame()
         {
             SetupHud();
-            MainCamera = CreateCamera(World);
+            MainCamera = CreateCamera(State.RootScene);
             MainCamera.Node.SetWorldPosition(new Vector3(0, 2, 0));
 
             SetMainViewport();
@@ -44,21 +44,21 @@ namespace Client.Game
 
                 ArenaSize = Tutorials.TutorialAPI.CurrentTutorial.ArenaSize;
                 if (Tutorials.TutorialAPI.CurrentTutorial.UseSimpleArena)
-                    CurrentArena = new SimpleArena();
+                    State.World = new SimpleArena();
                 else
-                    CurrentArena = new Arena();
+                    State.World = new Arena();  // TODO, get world from server
             }
             else
             {
-                CurrentArena = new SimpleArena();
+                State.World = new SimpleArena();
             }
 
-            CurrentArena.Setup(ResourceCache, World, ArenaSize);
+            State.World.Setup(ResourceCache, State.RootScene, ArenaSize);
             MainCamera.FarClip = ArenaSize * 2;
             MainCamera.NearClip = 0.1f;
 
             Tutorials.TutorialAPI.GameApp = this;
-            Tutorials.TutorialAPI.CurrentArena = CurrentArena;
+            Tutorials.TutorialAPI.CurrentArena = State.World;
             Tutorials.TutorialAPI.CurrentTutorial?.Startup();
 
             Hud.ChatPanel.AddChatText("Startup", Hud.ChatPanel.SystemSource);
@@ -73,13 +73,13 @@ namespace Client.Game
         {
             Tutorials.TutorialAPI.StopTutorial();
 
-            if (World != null)
+            State.ClearWorld();
+            if (State.RootScene != null)
             {
-                World.Clear();
-                World.Remove();
-                World = null;
+                State.RootScene.Remove();
+                State.RootScene = null;
             }
-            CurrentArena = null;
+            State = null;
 
             GameState = GameStates.Inactive;
             Update -= Game_Update;
@@ -145,7 +145,7 @@ namespace Client.Game
 
         public void SpawnPlayer()
         {
-            SpawnPlayer(CurrentArena.GetSpawn(), Quaternion.Identity);
+            SpawnPlayer(State.World.GetSpawn(), Quaternion.Identity);
         }
 
         public void SpawnPlayer(Vector3 pos, Quaternion orient)
@@ -154,7 +154,7 @@ namespace Client.Game
 
             if (Me == null)
             {
-                var Ship = Ships.GetShipNode(ResourceCache, World, Ships.TeamColors.Blue, "Mk3");
+                var Ship = Ships.GetShipNode(ResourceCache, State.RootScene, Ships.TeamColors.Blue, "Mk3");
 
                 Me = Ship.Node.CreateComponent<LocalPlayer>();
                 Me.Setup("Me");
@@ -162,6 +162,7 @@ namespace Client.Game
                 SetHudPlayer();
                 Me.Spawn(pos, orient);
                 ThisFrameInput = Me.CurrentInput;
+                State.AddPlayer(Me);
             }
 
             Hud.ChatPanel.AddChatText(ClientResources.SpawnHudMesage + pos.ToString(), Hud.ChatPanel.SystemSource);

@@ -49,6 +49,10 @@
     <Compile Include="GameState.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Maps\Arena.cs" />
+    <Compile Include="Messages\AuthRequest.cs" />
+    <Compile Include="Messages\AuthResponce.cs" />
+    <Compile Include="Messages\OptionsRequest.cs" />
+    <Compile Include="Messages\OptionsResponce.cs" />
     <Compile Include="NetworkEvents.cs" />
     <Compile Include="PlayerCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Game;
 using Urho;
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Server
 {
@@ -14,6 +15,9 @@ namespace Server
     {
         protected GameState Game = null;
         protected NetManager Server = null;
+
+        protected NetPacketProcessor Processor = new NetPacketProcessor();
+
 
         public class GamePeer
         {
@@ -51,7 +55,15 @@ namespace Server
 
             Server.UnconnectedMessagesEnabled = false;
 
+            Processor.SubscribeReusable<Game.Messages.AuthRequest, NetPeer>(HandleAuthRequest);
+
             Server.Start(2501);
+        }
+
+
+        protected void HandleAuthRequest(Game.Messages.AuthRequest request, NetPeer peer)
+        {
+
         }
 
         protected GamePeer GetGamePeer(NetPeer peer)

@@ -22,9 +22,9 @@ namespace Client.Game
             if (!DrawDebug || Exiting)
                 return;
 
-            if (World != null && World.GetComponent<PhysicsWorld>() != null)
+            if (State.RootScene != null && State.RootScene.GetComponent<PhysicsWorld>() != null)
             {
-                World.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
+                State.RootScene.GetComponent<PhysicsWorld>().DrawDebugGeometry(false);
             }
         }
     }

@@ -9,16 +9,15 @@ using Urho.Actions;
 using Urho.Audio;
 using Urho.Physics;
 
+using Game;
 using Game.Maps;
 
 namespace Client.Game
 {
     public partial class App : Application
     {
-        protected Scene World = null;
+        protected GameState State = null;
         protected Camera MainCamera = null;
-
-        internal Arena CurrentArena = null;
 
         public App(ApplicationOptions options = null) : base(options) { }
 
@@ -39,7 +38,8 @@ namespace Client.Game
             Tutorials.TutorialAPI.LoadTutorials();
 
             Menus.Stack.Setup(this);
-            World = new Scene();
+            State = new GameState();
+            State.RootScene = new Scene();
             SetupScene();
             SetupMainMenu();
 
@@ -54,6 +54,7 @@ namespace Client.Game
             Audio.SetMasterGain(SoundType.Music.ToString(), Config.Current.MusicVolume);
             Audio.SetMasterGain(SoundType.Effect.ToString(), Config.Current.EffectsVolume);
         }
+
 
         protected override void Stop()
         {
@@ -71,7 +72,7 @@ namespace Client.Game
 
         protected void SetMainViewport()
         {
-            Renderer.SetViewport(0, new Viewport(Context, World, MainCamera, null));
+            Renderer.SetViewport(0, new Viewport(Context, State.RootScene, MainCamera, null));
         }
 
         public void SetupRenderer()
@@ -120,16 +121,11 @@ namespace Client.Game
         public void SetupScene()
         {
             // start the game...
-            World.Clear();
-            World.CreateComponent<Octree>();
-            World.CreateComponent<DebugRenderer>();
+         
+            State.RootScene.CreateComponent<DebugRenderer>();
 
-            var physics = World.CreateComponent<PhysicsWorld>();
-
+            var physics = State.RootScene.GetComponent<PhysicsWorld>();
             physics.SetGravity(new Vector3(0, -10, 0));
-            physics.Interpolation = false;
-            physics.Fps = 120;
-            physics.SplitImpulse = true;
         }
     }
 }

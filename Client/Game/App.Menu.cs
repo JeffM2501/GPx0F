@@ -29,13 +29,13 @@ namespace Client.Game
 
         private void SetupMainMenu()
         {
-            SetupScene();
-            MainCamera = CreateCamera(World);
+            State.ClearWorld();
+            MainCamera = CreateCamera(State.RootScene);
             MainCamera.Node.SetWorldPosition(new Vector3(0, 1, -5));
             SetMainViewport();
 
-            CurrentArena = new Menus.Geometry.MenuBackground();
-            CurrentArena.Setup(ResourceCache, World, 200);
+            State.World = new Menus.Geometry.MenuBackground();
+            State.World.Setup(ResourceCache, State.RootScene, 200);
 
             Menus.Stack.ClearAll();
 
@@ -46,7 +46,7 @@ namespace Client.Game
 
             var music = ResourceCache.GetSound("Sounds/Ambient/425368__soundholder__ambient-meadow-near-forest-single-bird-and-eurasian-cranes-in-background-stereo-xy-mk012_01.ogg");
             music.Looped = true;
-            var musicNode = World.CreateChild("Music");
+            var musicNode = State.RootScene.CreateChild("Music");
             BGMSource = musicNode.CreateComponent<SoundSource>();
             BGMSource.Gain = Config.Current.MusicVolume;
             //  musicSource.Attenuation = 1;
