@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.Messages
+namespace Game.Protocol
 {
-    public class OptionsRequest
+    public static class Constants
     {
-        public string Option { get; set; }
+        public static readonly string HeaderProto = "GPx0F001";
     }
 }

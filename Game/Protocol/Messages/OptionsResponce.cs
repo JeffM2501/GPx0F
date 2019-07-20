@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.Messages
+namespace Game.Protocol.Messages
 {
-    public class AuthResponce
+    public class OptionsResponce
     {
-        public bool Ok { get; set; }
+        public string Option { get; set; }
         public string Result { get; set; }
-        public int ID { get; set; }
     }
 }

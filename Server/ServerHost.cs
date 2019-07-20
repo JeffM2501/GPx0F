@@ -5,18 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Game;
+using Game.Protocol;
 using Urho;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
 namespace Server
 {
-    public class ServerHost : EventBasedNetListener
+    public partial class ServerHost : EventBasedNetListener
     {
-        protected GameState Game = null;
+        protected GameState State = null;
         protected NetManager Server = null;
-
-        protected NetPacketProcessor Processor = new NetPacketProcessor();
 
 
         public class GamePeer
@@ -24,10 +23,16 @@ namespace Server
             public NetPeer Peer = null;
             public PlayerCore Player = null;
 
+
+            public string Callsign = string.Empty;
+            public int GlobalUserID = int.MinValue;
+            public bool VerifiedUser = false;
+            public string ValidationToken = string.Empty;
+
             public enum NegotiationStatuses
             {
                 Unverified,
-                Verified,
+                Validated,
                 AssetLoading,
                 Accepted,
             }
@@ -44,6 +49,8 @@ namespace Server
 
         public void Startup(GameState game, Application hostingApp)
         {
+            hostingApp.Update += HostingApp_Update;
+
             NetworkErrorEvent += ServerHost_NetworkErrorEvent;
             ConnectionRequestEvent += ServerHost_ConnectionRequestEvent;
             PeerConnectedEvent += ServerHost_PeerConnectedEvent;
@@ -54,16 +61,14 @@ namespace Server
             Server = new NetManager(this);
 
             Server.UnconnectedMessagesEnabled = false;
-
-            Processor.SubscribeReusable<Game.Messages.AuthRequest, NetPeer>(HandleAuthRequest);
+            RegisterMessageHandlers();
 
             Server.Start(2501);
         }
 
-
-        protected void HandleAuthRequest(Game.Messages.AuthRequest request, NetPeer peer)
+        private void HostingApp_Update(UpdateEventArgs obj)
         {
-
+            Server.PollEvents();
         }
 
         protected GamePeer GetGamePeer(NetPeer peer)
@@ -96,7 +101,7 @@ namespace Server
 
         private void ServerHost_ConnectionRequestEvent(ConnectionRequest request)
         {
-            if (request.Data.GetString(8) != "GPx0F_001")
+            if (request.Data.GetString(8) != Game.Protocol.Constants.HeaderProto)
                 return;
 
             // check ban list

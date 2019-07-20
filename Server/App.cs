@@ -10,11 +10,22 @@ namespace Server
 {
     public partial class App : Application
     {
+        private ServerHost Host = null;
+        private Game.GameState State = null;
+
         public App(ApplicationOptions options = null) : base(options) { }
 
         protected override void Start()
         {
             base.Start();
+            Host = new ServerHost();
+            State = new Game.GameState();
+            Host.Startup(State, this);
+        }
+
+        protected override void OnUpdate(float timeStep)
+        {
+            base.OnUpdate(timeStep);
         }
     }
 }
