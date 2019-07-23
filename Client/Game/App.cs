@@ -5,16 +5,17 @@ using System.Reflection;
 using Urho;
 using Urho.Resources;
 using Urho.Actions;
-
 using Urho.Audio;
 using Urho.Physics;
 
 using Game;
 using Game.Maps;
 
+using LiteNetLib;
+
 namespace Client.Game
 {
-    public partial class App : Application
+    public partial class App : Application, INetEventListener
     {
         protected GameState State = null;
         protected Camera MainCamera = null;
