@@ -20,7 +20,14 @@ namespace Server
             base.Start();
             Host = new ServerHost();
             State = new Game.GameState();
-            Host.Startup(State, this);
+
+            Update += App_Update;
+            Host.Startup(State);
+        }
+
+        private void App_Update(UpdateEventArgs obj)
+        {
+            Host.Update(obj);
         }
 
         protected override void OnUpdate(float timeStep)

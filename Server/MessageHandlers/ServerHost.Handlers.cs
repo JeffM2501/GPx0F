@@ -20,6 +20,16 @@ namespace Server
             Processor.SubscribeReusable<AuthRequest, NetPeer>(HandleAuthRequest);
         }
 
+        private void ServerHost_NetworkReceiveEvent(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
+        {
+            GamePeer p = GetGamePeer(peer);
+            if (p == null)
+                return;
+
+            Processor.ReadAllPackets(reader, peer);
+        }
+
+
         protected virtual void Send<T>(GamePeer peer, T message, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()
         {
             Processor.Send(peer.Peer, message, method);

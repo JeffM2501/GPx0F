@@ -115,6 +115,15 @@ namespace Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connecting to .
+        /// </summary>
+        internal static string ConnectMessage {
+            get {
+                return ResourceManager.GetString("ConnectMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Controls.
         /// </summary>
         internal static string ControlSettingsName {
@@ -194,6 +203,15 @@ namespace Client {
         internal static string JoinGame {
             get {
                 return ResourceManager.GetString("JoinGame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Joining Game.
+        /// </summary>
+        internal static string JoiningMessage {
+            get {
+                return ResourceManager.GetString("JoiningMessage", resourceCulture);
             }
         }
         
