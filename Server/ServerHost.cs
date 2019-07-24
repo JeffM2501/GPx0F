@@ -59,10 +59,8 @@ namespace Server
 
         public List<GamePeer> ConnectedPeers = new List<GamePeer>();
 
-        public void Startup(GameState game, Application hostingApp)
+        public void Startup(GameState game)
         {
-            hostingApp.Update += HostingApp_Update;
-
             SetGameInfo();
 
             NetworkErrorEvent += ServerHost_NetworkErrorEvent;
@@ -89,21 +87,13 @@ namespace Server
             WorldBuffer = State.World.Serialize();
         }
 
-        private void HostingApp_Update(UpdateEventArgs obj)
-        {
+        private void HostingApp_Update(UpdateEventArgs obj)        {
             Server.PollEvents();
         }
 
         protected GamePeer GetGamePeer(NetPeer peer)
         {
             return ConnectedPeers.Find((x) => x.Peer == peer);
-        }
-
-        private void ServerHost_NetworkReceiveEvent(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
-        {
-            GamePeer p = GetGamePeer(peer);
-            if (p == null)
-                return;
         }
 
         private void ServerHost_NetworkLatencyUpdateEvent(NetPeer peer, int latency)

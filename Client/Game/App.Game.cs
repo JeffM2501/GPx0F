@@ -14,6 +14,13 @@ namespace Client.Game
 {
     public partial class App
     {
+        public class StartupArguments
+        {
+            public string Host = string.Empty;
+            public int port = -1;
+        }
+
+
         public enum GameStates
         {
             Inactive,
@@ -29,7 +36,9 @@ namespace Client.Game
 
         public event EventHandler RequestSpawn = null;
 
-        protected void StartGame()
+        protected Server.ServerHost SelfServe = null;
+
+        protected void StartGame(StartupArguments arguments)
         {
             SetupHud();
             MainCamera = CreateCamera(State.RootScene);
@@ -38,19 +47,34 @@ namespace Client.Game
             SetMainViewport();
             float ArenaSize = 800;
 
-            if (Tutorials.TutorialAPI.CurrentTutorial != null)
+            if (arguments.Host != string.Empty && arguments.port < 0)
             {
                 Tutorials.TutorialAPI.GameApp = this;
+                Tutorials.TutorialAPI.StartTutorial(arguments.Host);
 
                 ArenaSize = Tutorials.TutorialAPI.CurrentTutorial.ArenaSize;
                 if (Tutorials.TutorialAPI.CurrentTutorial.UseSimpleArena)
                     State.World = new SimpleArena();
                 else
                     State.World = new Arena();  // TODO, get world from server
+
+                arguments.Host = string.Empty; // no server to connect to, the state will be managed by the tutorial
             }
             else
             {
-                State.World = new SimpleArena();
+                State.World = new Arena();
+            }
+
+            if (arguments.port == int.MaxValue && arguments.Host == "localhost")
+            {
+                SelfServe = new Server.ServerHost();
+                SelfServe.Startup(State);
+                arguments.port = 2501;
+            }
+
+            if (arguments.Host != string.Empty)
+            {
+                Connect(arguments.Host, arguments.port)
             }
 
             State.World.Setup(ResourceCache, State.RootScene, ArenaSize);
@@ -91,10 +115,25 @@ namespace Client.Game
             SetHudMessage(ClientResources.SpawnMessage);
         }
 
+        protected void SetConnecting()
+        {
+            GameState = GameStates.Connecting;
+            SetHudMessage(ClientResources.ConnectMessage + NetServerName);
+        }
+
+        protected void SetJoining()
+        {
+            GameState = GameStates.Joining;
+            SetHudMessage(ClientResources.JoinGame);
+        }
+
         private void Game_Update(Urho.UpdateEventArgs obj)
         {
             if (Exiting)
                 return;
+
+            SelfServe?.Update(obj);
+            PollMessages();
 
             UpdateFrameInput(obj.TimeStep);
 

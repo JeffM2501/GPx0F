@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 using Urho;
 using Urho.Gui;
 
+using Client.Game;
+
 namespace Client.Menus
 {
     public class Main : Menus.Stack.MenuScreen
     {
         public override string Name => "MainMenu";
 
-        public static event EventHandler StartGame = null;
+        public delegate void StartupCallback(App.StartupArguments args);
+
+        public static event StartupCallback StartGame = null;
         public static event EventHandler Quit = null;
 
         public override void Init()
@@ -37,7 +41,8 @@ namespace Client.Menus
 
             var buttons = CreateButtonColumnn(-150, 100, 400, 50, 25, new string[] { ClientResources.NewGame, ClientResources.JoinGame, ClientResources.Tutorials, ClientResources.Settings, ClientResources.Credits, ClientResources.Exit }, HorizontalAlignment.Right, VerticalAlignment.Top);
 
-            buttons[0].Pressed += NewGame_Pressed;
+            buttons[0].Pressed += QuickStart_Pressed;
+            buttons[1].Pressed += JoinGame_Pressed;
             buttons[2].Pressed += Tutorials_Pressed;
             buttons[3].Pressed += Settings_Pressed;
             buttons[4].Pressed += CreditsPressed;
@@ -59,16 +64,32 @@ namespace Client.Menus
             Stack.Push(new Settings.SettingsFrame());
         }
 
-        public static void NewGame_Pressed(PressedEventArgs obj)
+        private void Settings_Pressed(PressedEventArgs obj)
         {
+            App.StartupArguments args = new App.StartupArguments();
+            args.Host = "localhost";
+            args.port = int.MaxValue;
+            CallStartGame(args);
+        }
+
+        private void QuickStart_Pressed(PressedEventArgs obj)
+        {
+            App.StartupArguments args = new App.StartupArguments();
             // quick start
 #if DEBUG
             if (Tutorials.TutorialAPI.CurrentTutorial == null)
-                Tutorials.TutorialAPI.StartTutorial(Tutorials.TutorialAPI.AvalilbleTutorials.Values.ToArray()[0].DisplayName);
+                args.Host = Tutorials.TutorialAPI.AvalilbleTutorials.Values.ToArray()[0].DisplayName;
 #else
-            // find network game, or start basic tutorial
+            // TODO find network game, or start basic tutorial
+
 #endif
-            StartGame?.Invoke(null, EventArgs.Empty);
+            CallStartGame(args);
+        }
+
+
+        public static void CallStartGame(App.StartupArguments args)
+        {
+            StartGame?.Invoke(args);
         }
 
         private void Quit_Pressed(PressedEventArgs obj)

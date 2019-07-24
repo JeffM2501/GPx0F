@@ -113,12 +113,14 @@
     <Compile Include="Game\App.Game.cs" />
     <Compile Include="Game\App.Input.cs" />
     <Compile Include="Game\App.Menu.cs" />
+    <Compile Include="Game\App.Networking.cs" />
     <Compile Include="Game\Hud\ChatPanel.cs" />
     <Compile Include="Game\Hud\FillBar.cs" />
     <Compile Include="Game\Hud\Radar.cs" />
     <Compile Include="Game\Hud\StatusPanel.cs" />
     <Compile Include="Game\LocalPlayer.cs" />
     <Compile Include="Game\ClientPlayer.cs" />
+    <Compile Include="Game\MessageHandlers\App.Negotiation.cs" />
     <Compile Include="Menus\Geometry\MenuBackground.cs" />
     <Compile Include="Menus\Credits.cs" />
     <Compile Include="Menus\Main.cs" />
@@ -182,6 +184,10 @@
     <ProjectReference Include="..\Game\Game.csproj">
       <Project>{98051aeb-2cfb-4a83-9f3f-c2a816a3d325}</Project>
       <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server\Server.csproj">
+      <Project>{d2c76776-5f3d-458c-a4b4-74bf60f7d6a9}</Project>
+      <Name>Server</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

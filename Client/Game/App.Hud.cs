@@ -20,6 +20,7 @@ namespace Client.Game
         protected StatusPanel StatusWindow = null;
 
         protected Text HudCenterMessage = null;
+        protected Window HudCenterMessageFrame = null;
         protected float HudCenterMessageLife = -1;
 
         protected Sprite Crosshairs = null;
@@ -82,15 +83,23 @@ namespace Client.Game
 
             Font font = ResourceCache.GetFont("Fonts/Exo2-Black.otf");
 
-            HudCenterMessage = new Text();
+            HudCenterMessageFrame = new Window();
             HudRoot.AddChild(HudCenterMessage);
-            HudCenterMessage.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Top);
-            HudCenterMessage.SetPosition(0, 100);
+            HudCenterMessageFrame.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Top);
+            HudCenterMessageFrame.SetPosition(0, 100);
+            HudCenterMessageFrame.SetSize(HudRoot.Width -100, HudRoot.Height/3);
+            HudCenterMessageFrame.SetColor(new Color(Color.Green, 0.5f));
+
+            HudCenterMessage = new Text();
+            HudCenterMessageFrame.AddChild(HudCenterMessage);
+            HudCenterMessage.SetAlignment(HorizontalAlignment.Center, VerticalAlignment.Center);
+          //  HudCenterMessage.SetPosition(0, 100);
             HudCenterMessage.SetFont(font, 36);
             HudCenterMessage.SetColor(Color.FromHex("0F0F0F"));
             HudCenterMessage.Value = string.Empty;
-            HudCenterMessage.Visible = false;
+            HudCenterMessage.Visible = true;
 
+            HudCenterMessageFrame.Visible = false;
 
             Crosshairs = new Sprite();
             HudRoot.AddChild(Crosshairs);
@@ -125,18 +134,18 @@ namespace Client.Game
             ChatWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
             StatusWindow?.DoUpdate(obj.TimeStep, Time.ElapsedTime);
 
-            if (HudCenterMessage != null && HudCenterMessage.Visible && HudCenterMessageLife > 0)
+            if (HudCenterMessageFrame != null && HudCenterMessageFrame.Visible && HudCenterMessageLife > 0)
             {
                 HudCenterMessageLife -= obj.TimeStep;
                 if (HudCenterMessageLife < 0)
-                    HudCenterMessage.Visible = false;
+                    HudCenterMessageFrame.Visible = false;
             }
         }
 
         public void SetHudMessage(string text, float lifetime = -1)
         {
             HudCenterMessage.Value = text;
-            HudCenterMessage.Visible = text != string.Empty;
+            HudCenterMessageFrame.Visible = text != string.Empty;
             if (lifetime > 0)
                 HudCenterMessageLife = lifetime;
             else

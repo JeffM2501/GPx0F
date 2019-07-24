@@ -97,10 +97,10 @@ namespace Client.Menus
 
         private void Start_Pressed(PressedEventArgs obj)
         {
-            Tutorials.TutorialAPI.StartTutorial(Current);
-            Main.NewGame_Pressed(new PressedEventArgs());
+            Client.Game.App.StartupArguments args = new Game.App.StartupArguments();
+            args.Host = Current;
+            Main.CallStartGame(args);
         }
-
 
         private void Back_Pressed(PressedEventArgs obj)
         {

@@ -206,4 +206,10 @@ Allows the client to run without a server connection.</value>
   <data name="TutorialSourceName" xml:space="preserve">
     <value>Tutor</value>
   </data>
+  <data name="ConnectMessage" xml:space="preserve">
+    <value>Connecting to </value>
+  </data>
+  <data name="JoiningMessage" xml:space="preserve">
+    <value>Joining Game</value>
+  </data>
 </root>

@@ -79,11 +79,11 @@ namespace Client.Game
             DoExit();
         }
 
-        private void Main_StartGame(object sender, EventArgs e)
+        private void Main_StartGame(StartupArguments args)
         {
             Menus.Stack.ClearAll();
             SetupScene();
-            StartGame();
+            StartGame(args);
         }
     }
 }
