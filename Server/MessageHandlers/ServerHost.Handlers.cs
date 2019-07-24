@@ -18,6 +18,7 @@ namespace Server
         public void RegisterMessageHandlers()
         {
             Processor.SubscribeReusable<AuthRequest, NetPeer>(HandleAuthRequest);
+            Processor.SubscribeReusable<OptionsRequest, NetPeer>(HandleOptionsRequest);
         }
 
         protected virtual void Send<T>(GamePeer peer, T message, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()

@@ -9,5 +9,8 @@ namespace Game.Protocol.Messages
     public class OptionsRequest
     {
         public string Option { get; set; }
+
+        public static readonly string WorldData = "WORLD";
+        public static readonly string AssetsComplete = "ASSETSDONE";
     }
 }

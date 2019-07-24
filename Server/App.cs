@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Maps;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,10 @@ namespace Server
             base.Start();
             Host = new ServerHost();
             State = new Game.GameState();
+
+            State.World = new SimpleArena();
+            State.World.Setup(ResourceCache, State.RootScene, 500);
+
             Host.Startup(State, this);
         }
 

@@ -58,6 +58,7 @@
     <Compile Include="NetworkEvents.cs" />
     <Compile Include="PlayerCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\Messages\SetPlayerData.cs" />
     <Compile Include="Ships.cs" />
     <Compile Include="Maps\SimpleArena.cs" />
   </ItemGroup>

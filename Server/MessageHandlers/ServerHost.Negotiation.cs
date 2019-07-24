@@ -45,6 +45,39 @@ namespace Server
                 Server.Flush();
                 peer.Peer.Disconnect();
             }
+            else
+            {
+                Send(peer, GameInfoData);
+            }
+        }
+
+        public void HandleOptionsRequest(OptionsRequest request, NetPeer peer)
+        {
+            var player = GetGamePeer(peer);
+            if (player == null || player.NegotiationStatus != GamePeer.NegotiationStatuses.Unverified)
+                return;
+
+            OptionsResponce responce = new OptionsResponce();
+            responce.Option = request.Option;
+
+            if (request.Option == OptionsRequest.WorldData)
+                responce.Result = WorldBuffer;
+            else if (request.Option == OptionsRequest.AssetsComplete)
+            {
+                player.NegotiationStatus = GamePeer.NegotiationStatuses.AssetLoaded;
+                SendInitalPlayerStates(player);
+            }
+
+            if (responce.Result.Length > 0)
+                Send(player, responce);
+        }
+
+        public void SendInitalPlayerStates(GamePeer peer)
+        {
+            foreach (GamePeer player in State.Players)
+                Send(peer, peer.GetPlayerData(),DeliveryMethod.ReliableOrdered);
+
+            foreach(var)
         }
     }
 }

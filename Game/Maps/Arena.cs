@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
 
 using Urho;
@@ -15,6 +15,7 @@ namespace Game.Maps
         public static uint WorldColisionLayer = 2;
 
         protected Scene World = null;
+        protected Node RootNode = null;
         protected ResourceCache ResCache = null;
 
         public Urho.Rect Bounds { get; protected set; } = new Rect();
@@ -23,12 +24,38 @@ namespace Game.Maps
         {
             ResCache = resources;
             World = world;
+            RootNode = world.CreateChild();
+
             return true; // does nothing, that always works
+        }
+
+        public byte[] Serialize()
+        {
+            if (World == null)
+                return new byte[0];
+
+            MemoryStream ms = new MemoryStream();
+            MemoryBuffer memBuffer = new MemoryBuffer(ms);
+            RootNode.Save(memBuffer);
+            return ms.GetBuffer();
+        }
+
+        public void Deserialize(byte[] buffer)
+        {
+            foreach (var child in RootNode.Children)
+                child.Remove();
+            MemoryBuffer memBuffer = new MemoryBuffer(buffer);
+            RootNode.Load(memBuffer);
         }
 
         public virtual Vector3 GetSpawn()
         {
             return new Vector3(0, 2, 0);
+        }
+
+        public void AddNode(Node node)
+        {
+            RootNode.AddChild(node);
         }
 
         public void AddStaticPhysics(Node node)
@@ -65,7 +92,7 @@ namespace Game.Maps
 
         public Node MakeBox(string name, Vector3 pos, Vector3 scale, string materialName, Vector2 uvRepeat)
         {
-            var node = World.CreateChild(name);
+            var node = RootNode.CreateChild(name);
             node.Position = pos;
             node.Scale = scale;
             var model = node.CreateComponent<StaticModel>();
@@ -99,7 +126,7 @@ namespace Game.Maps
 
         public Node MakePlaneGround( float size, string material, float repeat)
         {
-            Node ground = World.CreateChild("ground");
+            Node ground = RootNode.CreateChild("ground");
             ground.Position = new Vector3(0.0f, 0.0f, 0.0f);
             ground.Scale = new Vector3(size * 4, 1, size * 4);
 

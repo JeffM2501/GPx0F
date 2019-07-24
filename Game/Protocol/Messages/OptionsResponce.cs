@@ -9,6 +9,6 @@ namespace Game.Protocol.Messages
     public class OptionsResponce
     {
         public string Option { get; set; }
-        public string Result { get; set; }
+        public byte[] Result { get; set; }
     }
 }

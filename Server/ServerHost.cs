@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Game;
 using Game.Protocol;
+using Game.Protocol.Messages;
 using Urho;
 using LiteNetLib;
 using LiteNetLib.Utils;
@@ -17,12 +18,12 @@ namespace Server
         protected GameState State = null;
         protected NetManager Server = null;
 
+        public Game.Protocol.Messages.GameInfo GameInfoData = null;
+        public byte[] WorldBuffer = new byte[0];
 
-        public class GamePeer
+        public class GamePeer : PlayerCore
         {
             public NetPeer Peer = null;
-            public PlayerCore Player = null;
-
 
             public string Callsign = string.Empty;
             public int GlobalUserID = int.MinValue;
@@ -33,7 +34,7 @@ namespace Server
             {
                 Unverified,
                 Validated,
-                AssetLoading,
+                AssetLoaded,
                 Accepted,
             }
 
@@ -43,6 +44,17 @@ namespace Server
             {
                 Peer = peer;
             }
+
+            public SetPlayerData GetPlayerData()
+            {
+                SetPlayerData data = new SetPlayerData();
+                data.Callsign = Callsign;
+                data.Team = this.Team;
+                data.PlayerID = ID;
+                data.Score = 0;
+
+                return data;
+            }
         }
 
         public List<GamePeer> ConnectedPeers = new List<GamePeer>();
@@ -50,6 +62,8 @@ namespace Server
         public void Startup(GameState game, Application hostingApp)
         {
             hostingApp.Update += HostingApp_Update;
+
+            SetGameInfo();
 
             NetworkErrorEvent += ServerHost_NetworkErrorEvent;
             ConnectionRequestEvent += ServerHost_ConnectionRequestEvent;
@@ -64,6 +78,15 @@ namespace Server
             RegisterMessageHandlers();
 
             Server.Start(2501);
+        }
+
+        protected void SetGameInfo()
+        {
+            GameInfoData.MapHash = string.Empty;
+            GameInfoData.MapName = "random";
+            GameInfoData.MapSize = 500;
+
+            WorldBuffer = State.World.Serialize();
         }
 
         private void HostingApp_Update(UpdateEventArgs obj)
