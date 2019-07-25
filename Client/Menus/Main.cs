@@ -64,7 +64,7 @@ namespace Client.Menus
             Stack.Push(new Settings.SettingsFrame());
         }
 
-        private void Settings_Pressed(PressedEventArgs obj)
+        private void JoinGame_Pressed(PressedEventArgs obj)
         {
             App.StartupArguments args = new App.StartupArguments();
             args.Host = "localhost";

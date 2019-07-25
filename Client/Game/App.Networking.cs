@@ -18,6 +18,7 @@ namespace Client.Game
     {
         NetManager NetCient = null;
         NetPacketProcessor Processor = new NetPacketProcessor();
+        EventBasedNetListener Listener = null;
 
         protected NetPeer ServerPeer = null;
 
@@ -26,16 +27,16 @@ namespace Client.Game
 
         public void Connect(string name, int port)
         {
-            NetCient = new NetManager(this);
+            Listener = new EventBasedNetListener();
+            Listener.PeerConnectedEvent += OnPeerConnected;
+            Listener.PeerDisconnectedEvent += OnPeerDisconnected;
+            Listener.NetworkReceiveEvent += OnNetworkReceive;
+
+            NetCient = new NetManager(Listener);
             var data = new NetDataWriter();
+            NetCient.Start();
             NetCient.Connect(name, port, Constants.HeaderProto);
         }
-
-
-        public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType) { }
-        public void OnNetworkLatencyUpdate(NetPeer peer, int latency) { }
-        public void OnConnectionRequest(ConnectionRequest request) { }
-        public void OnNetworkError(IPEndPoint endPoint, SocketError socketError) { }
 
         public void OnPeerConnected(NetPeer peer)
         {
@@ -66,6 +67,7 @@ namespace Client.Game
         public void RegisterMessageHandlers()
         {
             Processor.SubscribeReusable<AuthResponce, NetPeer>(HandleAuthResponce);
+            Processor.SubscribeReusable<GameInfo, NetPeer>(HandleGameInfo);
         }
 
         protected virtual void Send<T>(T message, DeliveryMethod method = DeliveryMethod.ReliableOrdered) where T : class, new()

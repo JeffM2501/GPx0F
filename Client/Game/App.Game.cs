@@ -36,8 +36,6 @@ namespace Client.Game
 
         public event EventHandler RequestSpawn = null;
 
-        protected Server.ServerHost SelfServe = null;
-
         protected void StartGame(StartupArguments arguments)
         {
             SetupHud();
@@ -65,16 +63,14 @@ namespace Client.Game
                 State.World = new Arena();
             }
 
-            if (arguments.port == int.MaxValue && arguments.Host == "localhost")
+            if (arguments.port == int.MaxValue)
             {
-                SelfServe = new Server.ServerHost();
-                SelfServe.Startup(State);
                 arguments.port = 2501;
             }
 
             if (arguments.Host != string.Empty)
             {
-                Connect(arguments.Host, arguments.port)
+                Connect(arguments.Host, arguments.port);
             }
 
             State.World.Setup(ResourceCache, State.RootScene, ArenaSize);
@@ -131,8 +127,6 @@ namespace Client.Game
         {
             if (Exiting)
                 return;
-
-            SelfServe?.Update(obj);
             PollMessages();
 
             UpdateFrameInput(obj.TimeStep);

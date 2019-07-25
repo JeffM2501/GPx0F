@@ -18,7 +18,7 @@ namespace Server
         protected GameState State = null;
         protected NetManager Server = null;
 
-        public Game.Protocol.Messages.GameInfo GameInfoData = null;
+        public GameInfo GameInfoData = new GameInfo();
         public byte[] WorldBuffer = new byte[0];
 
         public class GamePeer : PlayerCore
@@ -61,6 +61,8 @@ namespace Server
 
         public void Startup(GameState game)
         {
+            State = game;
+
             SetGameInfo();
 
             NetworkErrorEvent += ServerHost_NetworkErrorEvent;
@@ -87,7 +89,8 @@ namespace Server
             WorldBuffer = State.World.Serialize();
         }
 
-        private void HostingApp_Update(UpdateEventArgs obj)        {
+        public void Update(UpdateEventArgs obj)
+        {
             Server.PollEvents();
         }
 

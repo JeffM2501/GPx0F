@@ -78,6 +78,6 @@
     <Error Condition="!Exists('..\packages\UrhoSharp.1.9.67\build\net45\UrhoSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UrhoSharp.1.9.67\build\net45\UrhoSharp.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetDir)*.* $(SolutionDir)\_test\ /e /y /i /r</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetDir)*.* $(SolutionDir)_test\ /e /y /i /r</PostBuildEvent>
   </PropertyGroup>
 </Project>

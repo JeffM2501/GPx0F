@@ -77,7 +77,7 @@ namespace Server
             foreach (GamePeer player in State.Players)
                 Send(peer, peer.GetPlayerData(),DeliveryMethod.ReliableOrdered);
 
-            foreach(var)
+          //  foreach(var)
         }
     }
 }

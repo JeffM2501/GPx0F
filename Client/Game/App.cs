@@ -15,7 +15,7 @@ using LiteNetLib;
 
 namespace Client.Game
 {
-    public partial class App : Application, INetEventListener
+    public partial class App : Application
     {
         protected GameState State = null;
         protected Camera MainCamera = null;
@@ -25,6 +25,8 @@ namespace Client.Game
         protected override void Start()
         {
             base.Start();
+
+            RegisterMessageHandlers();
 
             if (Config.Current != null)
                 Config.Current.ApplyChanges += Config_ApplyChanges;
@@ -40,7 +42,6 @@ namespace Client.Game
 
             Menus.Stack.Setup(this);
             State = new GameState();
-            State.RootScene = new Scene();
             SetupScene();
             SetupMainMenu();
 
@@ -122,11 +123,11 @@ namespace Client.Game
         public void SetupScene()
         {
             // start the game...
-         
+
             State.RootScene.CreateComponent<DebugRenderer>();
 
             var physics = State.RootScene.GetComponent<PhysicsWorld>();
-            physics.SetGravity(new Vector3(0, -10, 0));
+            physics?.SetGravity(new Vector3(0, -10, 0));
         }
     }
 }

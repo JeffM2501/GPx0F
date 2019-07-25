@@ -21,13 +21,15 @@ namespace Server
             base.Start();
             Host = new ServerHost();
             State = new Game.GameState();
+            State.World = new SimpleArena();
+            State.World.Setup(ResourceCache, State.RootScene, 600);
 
 			Update += App_Update;
             Host.Startup(State);        }
 
         private void App_Update(UpdateEventArgs obj)
         {
-            Host.Update(obj);
+            Host?.Update(obj);
         }
 
         protected override void OnUpdate(float timeStep)
